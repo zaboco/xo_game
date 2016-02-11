@@ -1,0 +1,2 @@
+defmodule XoGame do
+end
