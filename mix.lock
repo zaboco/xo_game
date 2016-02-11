@@ -1,0 +1,5 @@
+%{"amrita": {:git, "https://github.com/josephwilk/amrita.git", "753fb7c1b31d70ffbe6ac7bf6e6077983f74f98d", []},
+  "fs": {:hex, :fs, "0.9.2"},
+  "meck": {:hex, :meck, "0.8.4"},
+  "mix_test_watch": {:hex, :mix_test_watch, "0.2.5"},
+  "mock": {:hex, :mock, "0.1.1"}}
