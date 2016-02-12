@@ -20,8 +20,11 @@ defmodule Game do
       |> Game.end_round
   end
 
-  def end_round(_updated_game_state) do
-    raise "should not be called yet"
+  def end_round({status, board, players} = game_state) do
+    case status do
+      :in_progress ->
+        Game.play_round({status, board, Players.swap(players)})
+    end
   end
 
   @spec make_player(sign) :: player
