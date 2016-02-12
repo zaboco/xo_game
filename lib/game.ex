@@ -24,7 +24,17 @@ defmodule Game do
     case status do
       :in_progress ->
         Game.play_round({status, board, Players.swap(players)})
+      :win ->
+        IO.puts "Game over. #{Players.current players} won!"
+        Game.end_game
+      :tie ->
+        IO.puts "Game over. It is a tie!"
+        Game.end_game
     end
+  end
+
+  def end_game do
+
   end
 
   @spec make_player(sign) :: player
