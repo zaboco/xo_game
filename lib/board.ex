@@ -1,4 +1,6 @@
 defmodule Board do
+  def empty, do: ~b|_ _ _ : _ _ _ : _ _ _|
+
   def sigil_b(term, []) do
     String.split(term, ":") |> Enum.map(&to_atoms/1)
   end
