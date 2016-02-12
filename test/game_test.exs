@@ -1,5 +1,6 @@
 defmodule GameTest do
   use ExUnit.Case, async: false
+  import ExUnit.CaptureIO
   import :meck
 
   test "make_player gets its type from user input" do
@@ -25,8 +26,8 @@ defmodule GameTest do
   end
 
   defp with_inputs(inputs, cb) do
-    :meck.expect IO, :gets, [:_], :meck.seq inputs
-    cb.()
-    :meck.unload
+    expect IO, :gets, [:_], seq inputs
+    capture_io cb
+    unload
   end
 end
