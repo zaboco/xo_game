@@ -19,7 +19,7 @@ defmodule XoGame.Mixfile do
   defp deps do
     [
       {:excoveralls, "~> 0.4", only: :test},
-      {:mock, "~> 0.1.1", only: :test},
+      {:meck, "~> 0.8.4", only: :test},
       {:mix_test_watch, "~> 0.2", only: :dev}
     ]
   end

@@ -1,4 +1,6 @@
 defmodule Game do
+  alias String, as: S
+
   @type player :: {sign, player_type}
   @type player_type :: :human | :computer
   @type sign :: :x | :o
@@ -7,11 +9,20 @@ defmodule Game do
 
   @spec make_player(sign) :: player
   def make_player(sign) do
-    type_initial = IO.gets("Choose type for #{sign}: [h]uman / [c]omputer")
-      |> String.strip |> String.first
-    type = Enum.find @player_types, fn type ->
-      type |> Atom.to_string |> String.starts_with?(type_initial)
-    end
+    type = read_player_type_for sign
     {sign, type}
+  end
+
+  @spec read_player_type_for(sign) :: player_type
+  defp read_player_type_for(sign) do
+    prompt = "Choose type for #{sign} - [h]uman / [c]omputer: "
+    type_initial = IO.gets(prompt) |> S.strip |> S.first |> S.to_atom
+    case type_initial do
+      :h -> :human
+      :c -> :computer
+      other ->
+        IO.puts "Unknown type #{other}."
+        read_player_type_for sign
+    end
   end
 end

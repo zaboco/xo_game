@@ -1,16 +1,32 @@
 defmodule GameTest do
   use ExUnit.Case, async: false
-  import Mock
+  import :meck
 
   test "make_player gets its type from user input" do
-    with_input "h", fn ->
+    with_inputs ["h"], fn ->
+      assert Game.make_player(:x) == {:x, :human}
+    end
+
+    with_inputs ["c"], fn ->
+      assert Game.make_player(:x) == {:x, :computer}
+    end
+  end
+
+  test "make_player also accepts whole words" do
+    with_inputs ["human"], fn ->
       assert Game.make_player(:x) == {:x, :human}
     end
   end
 
-  defp with_input(input, cb) do
-    with_mock IO, gets: fn(_) -> input end do
-      cb.()
+  test "make_player asks for type until valid one is given" do
+    with_inputs ["other", "h"], fn ->
+      assert Game.make_player(:x) == {:x, :human}
     end
+  end
+
+  defp with_inputs(inputs, cb) do
+    :meck.expect IO, :gets, [:_], :meck.seq inputs
+    cb.()
+    :meck.unload
   end
 end
