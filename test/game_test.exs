@@ -3,6 +3,10 @@ defmodule GameTest do
   import ExUnit.CaptureIO
   import :meck
 
+  setup do
+    on_exit fn -> unload end
+  end
+
   test "make_player gets its type from user input" do
     with_inputs ["h"], fn ->
       assert Game.make_player(:x) == {:x, :human}
@@ -25,8 +29,15 @@ defmodule GameTest do
     end
   end
 
+  test "start makes both players and plays round with the initial state" do
+    expect Game, :make_player, fn sign -> "player-#{sign}" end
+    expect Game, :play_round, 1, nil
+    Game.start
+    assert called(Game, :play_round, [GameState.initial(["player-x", "player-o"])])
+  end
+
   defp with_inputs(inputs, cb) do
-    expect IO, :gets, [:_], seq inputs
+    expect IO, :gets, 1, seq inputs
     capture_io cb
     unload
   end
