@@ -49,10 +49,28 @@ defmodule GameTest do
     assert called(Game, :end_round, [:updated_state])
   end
 
-  test "end_round swaps players and starts the new round if still in_progress" do
+  test "if the game is still in_progress, end_round swaps players and starts the new round" do
     expect Game, :play_round, 1, nil
     Game.end_round {:in_progress, :board, [:current_player, :other_player]}
     assert called(Game, :play_round, [{:in_progress, :board, [:other_player, :current_player]}])
+  end
+
+  test "when player wins, end_round shows relevant message and ends game" do
+    expect Game, :end_game, 0, nil
+    output = capture_io fn ->
+      Game.end_round {:win, :board, [:current_player, :other_player]}
+    end
+    assert output =~ ~r/current_player won/i
+    assert called(Game, :end_game, [])
+  end
+
+  test "when it is a tie, end_round shows relevant message and ends game" do
+    expect Game, :end_game, 0, nil
+    output = capture_io fn ->
+      Game.end_round {:tie, :board, :players}
+    end
+    assert output =~ ~r/it is a tie/i
+    assert called(Game, :end_game, [])
   end
 
   defp with_inputs(inputs, cb) do
