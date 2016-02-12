@@ -73,6 +73,27 @@ defmodule GameTest do
     assert called(Game, :end_game, [])
   end
 
+  test "end_game starts a new game if the user chooses to" do
+    assert_game_start_called = fn ->
+      expect Game, :start, 0, nil
+      Game.end_game
+      assert called(Game, :start, [])
+    end
+    with_inputs ["y"], assert_game_start_called
+    with_inputs [""], assert_game_start_called
+  end
+
+  test "end_game does not starts a new game if the user chooses to" do
+    assert_game_start_not_called = fn ->
+      expect Game, :start, 0, nil
+      output = capture_io fn -> Game.end_game end
+      assert output =~ ~r/thanks for playing/i
+      assert !called(Game, :start, [])
+    end
+    with_inputs ["n"], assert_game_start_not_called
+    with_inputs ["x"], assert_game_start_not_called
+  end
+
   defp with_inputs(inputs, cb) do
     expect IO, :gets, 1, seq inputs
     capture_io cb

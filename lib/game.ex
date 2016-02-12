@@ -34,7 +34,11 @@ defmodule Game do
   end
 
   def end_game do
-
+    answer = IO.gets("Play again? (Y/n)") |> S.strip |> S.downcase
+    case answer do
+      ok when ok in ["y", ""] -> Game.start
+      _ -> IO.puts "Too bad. Thanks for playing anyway!"
+    end
   end
 
   @spec make_player(sign) :: player
