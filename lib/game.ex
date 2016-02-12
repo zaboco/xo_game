@@ -12,7 +12,15 @@ defmodule Game do
     Game.play_round GameState.initial(players)
   end
 
-  def play_round(game_state) do
+  def play_round({:in_progress, board, [player, _other]} = game_state) do
+    {sign, _type} = player
+    move = Players.get_move board, sign
+    game_state
+      |> GameState.apply_move(move)
+      |> Game.end_round
+  end
+
+  def end_round(_updated_game_state) do
     raise "should not be called yet"
   end
 
