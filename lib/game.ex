@@ -12,7 +12,7 @@ defmodule Game do
     Game.play_round GameState.initial(players)
   end
 
-  def play_round({:in_progress, board, [player, _other]} = game_state) do
+  def play_round({board, [player, _other]} = game_state) do
     {sign, _type} = player
     move = Players.get_move board, sign
     game_state
@@ -20,10 +20,10 @@ defmodule Game do
       |> Game.end_round
   end
 
-  def end_round({status, board, players} = game_state) do
-    case status do
+  def end_round({board, players} = game_state) do
+    case GameState.check_status(board) do
       :in_progress ->
-        Game.play_round({status, board, Players.swap(players)})
+        Game.play_round({board, Players.swap(players)})
       :win ->
         IO.puts "Game over. #{Players.current players} won!"
         Game.end_game
