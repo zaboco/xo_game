@@ -41,7 +41,7 @@ defmodule GameTest do
   applies it to the current state
   and calls end_round with the new state
   """ do
-    initial_state = {:in_progress, :board, [{:x, :human}, nil]}
+    initial_state = {:board, [{:x, :human}, nil]}
     expect Players, :get_move, [:board, :x], :move
     expect GameState, :apply_move, [initial_state, :move], :updated_state
     expect Game, :end_round, 1, nil
@@ -50,24 +50,27 @@ defmodule GameTest do
   end
 
   test "if the game is still in_progress, end_round swaps players and starts the new round" do
+    expect GameState, :check_status, [:board], :in_progress
     expect Game, :play_round, 1, nil
-    Game.end_round {:in_progress, :board, [:current_player, :other_player]}
-    assert called(Game, :play_round, [{:in_progress, :board, [:other_player, :current_player]}])
+    Game.end_round {:board, [:current_player, :other_player]}
+    assert called(Game, :play_round, [{:board, [:other_player, :current_player]}])
   end
 
   test "when player wins, end_round shows relevant message and ends game" do
+    expect GameState, :check_status, [:board], :win
     expect Game, :end_game, 0, nil
     output = capture_io fn ->
-      Game.end_round {:win, :board, [:current_player, :other_player]}
+      Game.end_round {:board, [:current_player, :other_player]}
     end
     assert output =~ ~r/current_player won/i
     assert called(Game, :end_game, [])
   end
 
   test "when it is a tie, end_round shows relevant message and ends game" do
+    expect GameState, :check_status, [:board], :tie
     expect Game, :end_game, 0, nil
     output = capture_io fn ->
-      Game.end_round {:tie, :board, :players}
+      Game.end_round {:board, :players}
     end
     assert output =~ ~r/it is a tie/i
     assert called(Game, :end_game, [])
