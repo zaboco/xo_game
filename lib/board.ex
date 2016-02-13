@@ -1,6 +1,9 @@
 defmodule Board do
   def empty, do: ~b|_ _ _ : _ _ _ : _ _ _|
 
+  def fill_cell(board, at: index, with: sign) do
+  end
+
   def sigil_b(term, []) do
     String.split(term, ":") |> Enum.map(&to_atoms/1)
   end
