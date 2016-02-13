@@ -6,6 +6,8 @@ defmodule GameState do
   def check_status(game_state) do
   end
 
-  def apply_move(game_state, move) do
+  def apply_move({board, players}, {index, sign}) do
+    new_board = board |> Board.fill_cell at: index, with: sign
+    {new_board, players}
   end
 end
