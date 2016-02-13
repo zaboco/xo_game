@@ -5,11 +5,13 @@ defmodule GameState do
 
   def check_status board do
     cond do
-      is_win board -> :win
+      is_win? board -> :win
+      is_full? board -> :tie
+      true -> :in_progress
     end
   end
 
-  defp is_win board do
+  defp is_win? board do
     [&rows/1, &columns/1, &diagonals/1]
       |> Enum.flat_map(fn selector -> selector.(board) end)
       |> Enum.any?(&same_items?/1)
@@ -37,6 +39,12 @@ defmodule GameState do
     case list do
       [] -> true
       [x | xs] -> Enum.all? xs, &(&1 == x)
+    end
+  end
+
+  defp is_full? board do
+    Enum.all? board, fn row ->
+      Enum.all? row, &(&1 in [:x, :o])
     end
   end
 

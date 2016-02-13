@@ -30,4 +30,20 @@ defmodule GameStateTest do
     assert GameState.check_status(~b|x _ _ : _ x _ : _ _ x|) == :win
     assert GameState.check_status(~b|_ _ o : _ o _ : o _ _|) == :win
   end
+
+  test "check_status returns :tie if no winner and the board is full" do
+    assert GameState.check_status(~B"""
+      x o x
+      o x o
+      o x o
+    """) == :tie
+  end
+
+  test "check_status returns :in_progress if neither :win nor :tie" do
+    assert GameState.check_status(~B"""
+      x o x
+      o x o
+      o x _
+    """) == :in_progress
+  end
 end
