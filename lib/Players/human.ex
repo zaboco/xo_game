@@ -1,18 +1,23 @@
 defmodule Players.Human do
-  alias TableRex.Table
-
   def read_move board, sign do
-    print_board board
-    cell_index = IO.gets("Choose an empty cell: ")
-      |> String.strip
-      |> String.to_integer
-    cond do
-      !Board.is_cell_empty?(board, cell_index) -> read_move board, sign
-      true -> {cell_index, sign}
+    Board.print_with_indexes board
+    {read_index_in(board), sign}
+  end
+
+  defp read_index_in board do
+    input = IO.gets("Choose an empty cell: ") |> String.strip
+    case index_if_valid input, in: board do
+      nil ->
+        IO.puts "Cell #{input} is not valid!"
+        read_index_in board
+      index -> index
     end
   end
 
-  defp print_board board do
-    Table.new(board) |> Table.render!(horizontal_style: :all) |> IO.write
+  defp index_if_valid index_as_string, in: board do
+    case Integer.parse index_as_string do
+      {index, ""} -> if Board.is_cell_empty?(board, index), do: index
+      :error -> nil
+    end
   end
 end

@@ -10,7 +10,7 @@ defmodule Players do
     [next, current]
   end
 
-  def current [current, _next] do
-    current
+  def show_current [{sign, type}, _next] do
+    "#{sign}(#{type})"
   end
 end

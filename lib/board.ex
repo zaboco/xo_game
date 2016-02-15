@@ -1,4 +1,5 @@
 defmodule Board do
+  alias TableRex.Table
   @size 3
 
   def empty, do: ~b|_ _ _ : _ _ _ : _ _ _|
@@ -55,6 +56,27 @@ defmodule Board do
         {:_, i} -> i
         {other, _i} -> other
       end)
+  end
+
+  def print_with_indexes board do
+    board |> print_matrix
+  end
+
+  def print board do
+    board |> remove_indexes |> print_matrix
+  end
+
+  defp remove_indexes board do
+    Enum.map board, fn row ->
+      Enum.map row, fn
+        index when index in 0..8 -> " "
+        other -> other
+      end
+    end
+  end
+
+  defp print_matrix matrix do
+    Table.new(matrix) |> Table.render!(horizontal_style: :all) |> IO.write
   end
 
   defp to_atoms(string) do
