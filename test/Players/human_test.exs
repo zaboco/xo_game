@@ -36,5 +36,9 @@ defmodule Players.HumanTest do
     with_inputs ["1\n", "3\n"], fn ->
       assert Human.read_move(@board, :sign) == {3, :sign}
     end
+
+    with_inputs ["a\n", "4\n"], fn ->
+      assert Human.read_move(@board, :sign) == {4, :sign}
+    end
   end
 end

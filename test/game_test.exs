@@ -52,6 +52,7 @@ defmodule GameTest do
 
   test "if the game is still in_progress, end_round swaps players and starts the new round" do
     expect GameState, :check_status, [:board], :in_progress
+    expect Board, :print, [:board], nil
     expect Game, :play_round, 1, nil
     Game.end_round {:board, [:current_player, :other_player]}
     assert called(Game, :play_round, [{:board, [:other_player, :current_player]}])
@@ -59,16 +60,18 @@ defmodule GameTest do
 
   test "when player wins, end_round shows relevant message and ends game" do
     expect GameState, :check_status, [:board], :win
+    expect Board, :print, [:board], nil
     expect Game, :end_game, 0, nil
     output = capture_io fn ->
-      Game.end_round {:board, [:current_player, :other_player]}
+      Game.end_round {:board, [{:x, :human}, :other_player]}
     end
-    assert output =~ ~r/current_player won/i
+    assert output =~ ~r/x\(human\) won/i
     assert called(Game, :end_game, [])
   end
 
   test "when it is a tie, end_round shows relevant message and ends game" do
     expect GameState, :check_status, [:board], :tie
+    expect Board, :print, [:board], nil
     expect Game, :end_game, 0, nil
     output = capture_io fn ->
       Game.end_round {:board, :players}

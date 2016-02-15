@@ -19,12 +19,13 @@ defmodule Game do
       |> Game.end_round
   end
 
-  def end_round({board, players} = game_state) do
+  def end_round({board, players}) do
+    Board.print board
     case GameState.check_status(board) do
       :in_progress ->
         Game.play_round({board, Players.swap(players)})
       :win ->
-        IO.puts "Game over. #{Players.current players} won!"
+        IO.puts "Game over. #{Players.show_current players} won!"
         Game.end_game
       :tie ->
         IO.puts "Game over. It is a tie!"
