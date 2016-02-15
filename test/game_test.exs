@@ -1,6 +1,7 @@
 defmodule GameTest do
   use ExUnit.Case, async: false
   import ExUnit.CaptureIO
+  import MeckUtils, only: [with_inputs: 2]
   import :meck
 
   setup do
@@ -41,8 +42,8 @@ defmodule GameTest do
   applies it to the current state
   and calls end_round with the new state
   """ do
-    initial_state = {:board, [{:x, :human}, nil]}
-    expect Players, :get_move, [:board, :x], :move
+    initial_state = {:board, [:player, nil]}
+    expect Players, :get_move, [:board, :player], :move
     expect GameState, :apply_move, [initial_state, :move], :updated_state
     expect Game, :end_round, 1, nil
     Game.play_round initial_state
@@ -95,11 +96,5 @@ defmodule GameTest do
     end
     with_inputs ["n"], assert_game_start_not_called
     with_inputs ["x"], assert_game_start_not_called
-  end
-
-  defp with_inputs(inputs, cb) do
-    expect IO, :gets, 1, seq inputs
-    capture_io cb
-    unload
   end
 end
