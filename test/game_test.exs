@@ -37,24 +37,26 @@ defmodule GameTest do
     assert called(Game, :play_round, [GameState.initial(["player-x", "player-o"])])
   end
 
+  @player_x {:x, :human}
   test """
   play_round gets current player's move,
   applies it to the current state
   and calls end_round with the new state
   """ do
-    initial_state = {:board, [:player, nil]}
-    expect Players, :get_move, [:board, :player], :move
-    expect GameState, :apply_move, [initial_state, :move], :updated_state
+    initial_state = GameState.initial [@player_x, nil]
+    move = {0, :x}
+    updated_state = GameState.apply_move initial_state, move
+    expect Players, :get_move, 2, move
     expect Game, :end_round, 1, nil
-    Game.play_round initial_state
-    assert called(Game, :end_round, [:updated_state])
+    capture_io fn -> Game.play_round initial_state end
+    assert called(Game, :end_round, [updated_state])
   end
 
   test "if the game is still in_progress, end_round swaps players and starts the new round" do
     expect GameState, :check_status, [:board], :in_progress
     expect Board, :print, [:board], nil
     expect Game, :play_round, 1, nil
-    Game.end_round {:board, [:current_player, :other_player]}
+    capture_io fn -> Game.end_round {:board, [:current_player, :other_player]} end
     assert called(Game, :play_round, [{:board, [:other_player, :current_player]}])
   end
 

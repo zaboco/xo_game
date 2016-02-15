@@ -12,7 +12,8 @@ defmodule Game do
     Game.play_round GameState.initial(players)
   end
 
-  def play_round({board, [player, _other]} = game_state) do
+  def play_round({board, [player, _other] = players} = game_state) do
+    IO.puts "\nIt is #{Players.show_current players}'s turn:"
     move = Players.get_move board, player
     game_state
       |> GameState.apply_move(move)
@@ -20,6 +21,7 @@ defmodule Game do
   end
 
   def end_round({board, players}) do
+    IO.puts "The board is now:"
     Board.print board
     case GameState.check_status(board) do
       :in_progress ->
