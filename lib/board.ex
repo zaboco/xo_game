@@ -3,6 +3,10 @@ defmodule Board do
 
   def empty, do: ~b|_ _ _ : _ _ _ : _ _ _|
 
+  def is_cell_empty? board, cell_index do
+    board |> List.flatten |> Enum.any?(&(&1 == cell_index))
+  end
+
   def fill_cell(board, at: index, with: sign) do
     new_board = Enum.map board, fn row ->
       replace_in row, index, sign

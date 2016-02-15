@@ -43,4 +43,11 @@ defmodule BoardTest do
     expected = [[:x, 1, 2], [:o, 4, 5]]
     assert Board.fill_matrix_with_indexes(matrix, 3) == expected
   end
+
+  test "is_cell_empty? works" do
+    board = ~b|_ x _ : _ _ _ : _ _ _|
+    assert Board.is_cell_empty?(board, 0)
+    assert !Board.is_cell_empty?(board, 1)
+    assert !Board.is_cell_empty?(board, 10)
+  end
 end
