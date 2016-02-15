@@ -13,8 +13,7 @@ defmodule Game do
   end
 
   def play_round({board, [player, _other]} = game_state) do
-    {sign, _type} = player
-    move = Players.get_move board, sign
+    move = Players.get_move board, player
     game_state
       |> GameState.apply_move(move)
       |> Game.end_round
