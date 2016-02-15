@@ -9,7 +9,7 @@ defmodule GameStateTest do
   end
 
   test "apply_move" do
-    expect Board, :fill_cell, [:board, [at: 2, with: :x]], :new_board
+    expect Board, :fill_cell, [:board, [at: 2, with: :x]], {:ok, :new_board}
     new_state = GameState.apply_move {:board, :players}, {2, :x}
     assert new_state == {:new_board, :players}
     unload Board
