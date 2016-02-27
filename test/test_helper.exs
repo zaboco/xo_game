@@ -1,4 +1,4 @@
-ExUnit.start()
+ExUnit.start(exclude: :test, include: :rewrite)
 
 defmodule MeckUtils do
   import ExUnit.CaptureIO
