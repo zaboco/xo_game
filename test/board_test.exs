@@ -1,53 +1,93 @@
 defmodule BoardTest do
   use ExUnit.Case
-  import Board
+  import Matrix.Sigils, only: [sigil_m: 2]
 
-  @some_board [
-    [:x, 1, 2],
-    [:o, 4, 5],
-    [6, 7, 8],
-  ]
+  @moduletag :rewrite
 
-  test "sigil b transforms a colon-delimited string into a board" do
-    assert ~b|x _ _ : o _ _ : _ _ _| == @some_board
+  @empty_board  Board.empty(3)
+  @some_board   Board.new ~m|x _ _ : _ o _ : _ _ x|
+
+  ## to_matrix
+  test "to_matrix returns indexes for empty cells" do
+    expected_matrix = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+    assert @empty_board |> Board.to_matrix == expected_matrix
   end
 
-  test "sigil B uses newline as a delimiter" do
-    assert ~B"""
-      x _ _
-      o _ _
-      _ _ _
-    """ == @some_board
+  test "to_matrix returns actual signs for filled cells" do
+    expected_matrix = [[:x, 1, 2], [3, :o, 5], [6, 7, :x]]
+    assert @some_board |> Board.to_matrix == expected_matrix
   end
 
-  test "fill_cell replaces voids with signs" do
-    input = ~b|x _ _ : o _ _ : _ _ _|
-    expected = ~b|x x _ : o _ _ : _ _ _|
-    assert Board.fill_cell(input, at: 1, with: :x) == {:ok, expected}
+  test "to_matrix can modify void cells' representation" do
+    expected_matrix = [[:x, 2, 3], [4, :o, 6], [7, 8, :x]]
+    assert @some_board |> Board.to_matrix(& &1 + 1) == expected_matrix
   end
 
-  test "fill_cell does nothing when cell is already filled" do
-    input = ~b|x _ _ : o _ _ : _ _ _|
-    assert Board.fill_cell(input, at: 0, with: :x) == {:error, "Invalid cell: 0"}
-    assert Board.fill_cell(input, at: 10, with: :x) == {:error, "Invalid cell: 10"}
+
+  ## put
+  test "puts a sign in the cell if it is empty" do
+    expected_board = Board.new ~m|x x _ : _ o _ : _ _ x|
+    assert @some_board |> Board.put(1, :x) == expected_board
   end
 
-  test "replace voids with indexes in list" do
-    assert Board.fill_list_with_indexes([:_, :_, :_]) == [0, 1, 2]
-    assert Board.fill_list_with_indexes([:_, :x, :_]) == [0, :x, 2]
-    assert Board.fill_list_with_indexes([:_, :_, :_], 3) == [3, 4, 5]
+  test "put leaves the board unchanged if the cell is filled" do
+    assert @some_board |> Board.put(0, :x) == @some_board
   end
 
-  test "replace voids with indexes in matrix" do
-    matrix = [[:x, :_, :_], [:o, :_, :_]]
-    expected = [[:x, 1, 2], [:o, 4, 5]]
-    assert Board.fill_matrix_with_indexes(matrix, 3) == expected
+
+  ## check_status
+  test "status is :win if any row, column or diagonal is aligned" do
+    for board_rows <- [
+      # rows
+      ~m|x x x : _ _ _ : _ _ _|,
+      ~m|_ _ _ : o o o : _ _ _|,
+      ~m|x o o : o o x : x x x|,
+
+      #columns
+      ~m|
+        x _ _
+        x _ o
+        x o _|,
+      ~m|
+        x o _
+        _ o _
+        x o _|,
+      ~m|
+        _ x o
+        _ _ o
+        _ x o|,
+
+      #diagonals
+      ~m|
+        x _ o
+        _ x _
+        o _ x|,
+      ~m|
+        x _ o
+        _ o _
+        o _ x|,
+    ] do
+      status = board_rows |> Board.new |> Board.check_status
+      assert status == :win
+    end
   end
 
-  test "is_cell_empty? works" do
-    board = ~b|_ x _ : _ _ _ : _ _ _|
-    assert Board.is_cell_empty?(board, 0)
-    assert !Board.is_cell_empty?(board, 1)
-    assert !Board.is_cell_empty?(board, 10)
+  test "status is :tie if it's no winner and the board is full" do
+    tie_board = Board.new ~m|
+      x o x
+      o x o
+      o x o|
+    assert tie_board |> Board.check_status == :tie
+  end
+
+  test "status is :in_progress if neither :win nor :tie" do
+    allmost_full_board = Board.new ~m|
+      x o x
+      o x o
+      o x _|
+    assert allmost_full_board |> Board.check_status == :in_progress
+    assert @empty_board |> Board.check_status == :in_progress
   end
 end
+
+

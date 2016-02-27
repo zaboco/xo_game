@@ -9,7 +9,7 @@ defmodule XoGame.Mixfile do
      start_permanent: Mix.env == :prod,
      consolidate_protocols: Mix.env != :test,
      test_coverage: [tool: ExCoveralls],
-     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test],
+     preferred_cli_env: ["coveralls": :test, "coveralls.html": :test],
      deps: deps]
   end
 
