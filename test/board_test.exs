@@ -34,6 +34,12 @@ defmodule BoardTest do
     assert @some_board |> Board.put(0, :x) == @some_board
   end
 
+  test "put also does nothing when the index is invalid" do
+    assert @some_board |> Board.put(20, :x) == @some_board
+    assert @some_board |> Board.put(-5, :x) == @some_board
+    assert @some_board |> Board.put(:not_an_index, :x) == @some_board
+  end
+
 
   ## check_status
   test "status is :win if any row, column or diagonal is aligned" do
