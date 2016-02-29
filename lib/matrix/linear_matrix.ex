@@ -33,9 +33,19 @@ defmodule Matrix.LinearMatrix do
     def map(matrix, fun) do
       Map.update! matrix, :items, &Enum.map(&1, fun)
     end
+  end
 
-    def all?(%{items: items}, fun) do
-      Enum.all? items, fun
+  defimpl Enumerable do
+    def reduce(%{items: items}, acc, reducer) do
+      Enumerable.reduce(items, acc, reducer)
+    end
+
+    def member?(%{items: items}, value) do
+      Enumerable.member?(items, value)
+    end
+
+    def count(%{items: items}) do
+      Enumerable.count(items)
     end
   end
 end
