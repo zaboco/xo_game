@@ -27,7 +27,4 @@ defprotocol Matrix do
 
   @spec map(t, (any -> any)) :: t
   def map(matrix, fun)
-
-  @spec all?(t, (any -> boolean)) :: boolean
-  def all?(matrix, fun)
 end

@@ -32,16 +32,24 @@ defmodule Matrix.NestedMatrix do
       {Enum.at(list, i), Enum.at(list, -(i + 1))}
     end
 
-    def map(%{rows: rows}, fun) do
-      rows
-      |> Enum.map(&Enum.map &1, fun)
-      |> @for.from_rows
+    def map(%{rows: rows} = matrix, fun) do
+      matrix
+      |> Enum.map(fun)
+      |> @for.from_enum
+    end
+  end
+
+  defimpl Enumerable do
+    def reduce(%{rows: rows}, acc, reducer) do
+      Enumerable.reduce(List.flatten(rows), acc, reducer)
     end
 
-    def all?(%{rows: rows}, fun) do
-      rows
-      |> List.flatten
-      |> Enum.all?(fun)
+    def member?(%{rows: rows}, value) do
+      Enumerable.member?(List.flatten(rows), value)
+    end
+
+    def count(%{rows: rows}) do
+      Enumerable.count(List.flatten(rows))
     end
   end
 end

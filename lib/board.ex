@@ -43,7 +43,7 @@ defmodule Board do
 
   defp full?(board) do
     board
-    |> Matrix.all?(&Cell.filled?/1)
+    |> Enum.all?(&Cell.filled?/1)
   end
 
 

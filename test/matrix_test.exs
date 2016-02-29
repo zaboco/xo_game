@@ -6,28 +6,28 @@ defmodule MatrixTest do
       @moduletag :rewrite
 
       test "can create new matrix form enumerable" do
-        assert [[1, 2], [3, 4]] == Matrix.rows from_enum 1..4
+        assert from_enum(1..4) |> Matrix.rows == [[1, 2], [3, 4]]
       end
 
       test "can create new matrix form rows" do
-        assert [[1, 2], [3, 4]] == Matrix.rows from_rows [[1, 2], [3, 4]]
+        assert from_rows([[1, 2], [3, 4]]) |> Matrix.rows == [[1, 2], [3, 4]]
       end
 
       test "map function on matrix" do
-        assert from_enum(2..5) == Matrix.map from_enum(1..4), &(&1 + 1)
+        assert from_enum(1..4) |> Matrix.map(& &1 + 1) == from_enum(2..5)
       end
 
-      test "all?" do
-        assert true == Matrix.all? from_enum(1..4), &(&1 < 5)
-        assert false == Matrix.all? from_enum(1..4), &(&1 < 2)
+      test "matrix implement Enumerable" do
+        assert from_enum(1..4) |> Enum.all?(& &1 < 5) == true
+        assert from_enum(1..4) |> Enum.all?(& &1 < 2) == false
       end
 
       test "columns" do
-        assert [[1, 3], [2, 4]] == Matrix.columns from_enum 1..4
+        assert from_enum(1..4) |> Matrix.columns == [[1, 3], [2, 4]]
       end
 
       test "diagonals" do
-        assert {[1, 5, 9], [3, 5, 7]} == Matrix.diagonals from_enum 1..9
+        assert from_enum(1..9) |> Matrix.diagonals == {[1, 5, 9], [3, 5, 7]}
       end
 
       defp from_enum(list) do
