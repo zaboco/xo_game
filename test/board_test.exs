@@ -40,6 +40,19 @@ defmodule BoardTest do
     assert @some_board |> Board.put(:not_an_index, :x) == @some_board
   end
 
+  ## empty_at?
+  test "empy_at? ok" do
+    assert @some_board |> Board.empty_at?(1) == true
+  end
+
+  test "empty_at? false for filled cell" do
+    assert @some_board |> Board.empty_at?(0) == false
+  end
+
+  test "empty_at? false for outbound index" do
+    assert @some_board |> Board.empty_at?(10) == false
+    assert @some_board |> Board.empty_at?(-5) == false
+  end
 
   ## check_status
   test "status is :win if any row, column or diagonal is aligned" do
