@@ -25,6 +25,12 @@ defmodule Board do
     |> Matrix.map(&Cell.fill &1, if_at: index, with: sign)
   end
 
+  def empty_at?(board, index) do
+    board
+    |> Enum.at(index)
+    |> Cell.empty?
+  end
+
   def check_status(board) do
     cond do
       winner? board -> :win
@@ -79,6 +85,8 @@ defmodule Cell do
 
   def filled?({@void, _i}), do: false
   def filled?(_), do: true
+
+  def empty?(cell), do: !filled?(cell)
 
   def all_the_same?([first | rest]) do
     Enum.all? rest, &same_sign_as?(&1, first)
