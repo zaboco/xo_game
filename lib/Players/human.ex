@@ -1,4 +1,6 @@
 defmodule Players.Human do
+  defstruct [:sign]
+
   def read_move board, sign do
     Board.print_with_indexes board
     {read_index_in(board), sign}
