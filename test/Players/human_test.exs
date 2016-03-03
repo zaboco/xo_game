@@ -1,44 +1,55 @@
 defmodule Players.HumanTest do
   use ExUnit.Case
-  import ExUnit.CaptureIO
-  import MeckUtils, only: [with_inputs: 2]
-  import Board
   alias Players.Human
+  alias Doubles.FakeUI
 
-  test "read_move shows the board asking for a move" do
-    with_inputs ["0"], fn ->
-      prompt = capture_io fn -> Human.read_move(Board.empty, :sign) end
-      expected_prompt = """
-      +---+---+---+
-      | 0 | 1 | 2 |
-      +---+---+---+
-      | 3 | 4 | 5 |
-      +---+---+---+
-      | 6 | 7 | 8 |
-      +---+---+---+
-      """
-      assert String.strip(prompt) == String.strip(expected_prompt)
-    end
+  @moduletag :rewrite
+
+  @empty_board Board.empty(3)
+  @x_human %Human{sign: :x, ui: FakeUI}
+
+  setup do
+    FakeUI.init
+    :ok
   end
 
-  @board ~b|_ x _ : _ _ _ : _ _ _|
-  test "read_move returns the chosen move if valid" do
-    with_inputs ["0\n"], fn ->
-      assert Human.read_move(@board, :sign) == {0, :sign}
-    end
+  test "get_move displays the board with indexes" do
+    Player.get_move(@x_human, Board.empty(3))
+    assert_received {:print_matrix, [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+      ]}
   end
 
-  test "read_move asks for moves until valid" do
-    with_inputs ["9\n", "2\n"], fn ->
-      assert Human.read_move(@board, :sign) == {2, :sign}
-    end
+  test "get_move uses the given index if valid" do
+    FakeUI.will_return read_index: ["1"]
+    assert @x_human |> Player.get_move(@empty_board) == {0, :x}
+  end
 
-    with_inputs ["1\n", "3\n"], fn ->
-      assert Human.read_move(@board, :sign) == {3, :sign}
-    end
+  test "get_move reads the index again if not a digit" do
+    FakeUI.will_return read_index: ["a", "1"]
+    assert @x_human |> Player.get_move(@empty_board) == {0, :x}
+  end
 
-    with_inputs ["a\n", "4\n"], fn ->
-      assert Human.read_move(@board, :sign) == {4, :sign}
-    end
+  test "get_move reads the index again if cell not empty" do
+    board = @empty_board |> Board.put(0, :x)
+    FakeUI.will_return read_index: ["1", "2"]
+    assert @x_human |> Player.get_move(board) == {1, :x}
+  end
+
+  test "get_move reads the index again if out of bounds" do
+    FakeUI.will_return read_index: ["0", "4"]
+    assert @x_human |> Player.get_move(@empty_board) == {3, :x}
+  end
+
+  test "get_move logs error message if wrong index" do
+    FakeUI.will_return read_index: ["0", "4"]
+    @x_human |> Player.get_move(@empty_board)
+    assert_received {:log, [:wrong_index, "0"]}
+  end
+
+  test "show" do
+    assert @x_human |> Player.show == "x(human)"
   end
 end

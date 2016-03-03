@@ -51,7 +51,7 @@ defmodule BoardTest do
 
   test "empty_at? false for outbound index" do
     assert @some_board |> Board.empty_at?(10) == false
-    assert @some_board |> Board.empty_at?(-5) == false
+    assert @some_board |> Board.empty_at?(-2) == false
   end
 
   ## check_status
