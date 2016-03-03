@@ -1,4 +1,7 @@
-ExUnit.start(exclude: :test, include: :rewrite)
+ExUnit.start(exclude: :test, include: :rewrite, timeout: 100)
+
+Code.load_file("doubles/fake_ui.exs", "test")
+Code.load_file("doubles/player_stub.exs", "test")
 
 defmodule MeckUtils do
   import ExUnit.CaptureIO

@@ -1,25 +1,52 @@
 defmodule Players.Human do
-  defstruct [:sign]
+  defstruct [sign: :x, ui: nil]
 
-  def read_move board, sign do
-    Board.print_with_indexes board
-    {read_index_in(board), sign}
-  end
-
-  defp read_index_in board do
-    input = IO.gets("Choose an empty cell: ") |> String.strip
-    case index_if_valid input, in: board do
-      nil ->
-        IO.puts "Cell #{input} is not valid!"
-        read_index_in board
-      index -> index
+  defimpl Player do
+    def get_move(%{sign: sign, ui: ui}, board) do
+      print_board(ui, board)
+      {get_index(ui, board), sign}
     end
-  end
 
-  defp index_if_valid index_as_string, in: board do
-    case Integer.parse index_as_string do
-      {index, ""} -> if Board.is_cell_empty?(board, index), do: index
-      :error -> nil
+    defp print_board(ui, board) do
+      board
+      |> Board.to_matrix(& &1 + 1)
+      |> ui.print_matrix
+    end
+
+    defp get_index(ui, board) do
+      index_string = ui.read_index
+      case parse_and_validate(index_string, board) do
+        {:ok, index} ->
+          index
+        :error ->
+          ui.log(:wrong_index, index_string)
+          get_index(ui, board)
+      end
+    end
+
+    defp parse_and_validate(index_string, board) do
+      with \
+        {:ok, index} <- parse_index(index_string),
+        {:ok, valid_index} <- validate_index(index, board),
+      do: {:ok, valid_index}
+    end
+
+    defp parse_index(index_string) do
+      case Integer.parse(index_string) do
+        {index, ""} -> {:ok, index - 1}
+        :error -> :error
+      end
+    end
+
+    defp validate_index(index, board) do
+      case Board.empty_at?(board, index) do
+        true -> {:ok, index}
+        false -> :error
+      end
+    end
+
+    def show(%{sign: sign}) do
+      "#{sign}(human)"
     end
   end
 end

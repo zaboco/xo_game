@@ -25,11 +25,12 @@ defmodule Board do
     |> Matrix.map(&Cell.fill &1, if_at: index, with: sign)
   end
 
-  def empty_at?(board, index) do
+  def empty_at?(board, index) when index >= 0 do
     board
     |> Enum.at(index)
     |> Cell.empty?
   end
+  def empty_at?(_board, _index), do: false
 
   def check_status(board) do
     cond do
