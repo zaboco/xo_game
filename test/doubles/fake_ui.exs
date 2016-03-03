@@ -10,7 +10,7 @@ defmodule Doubles.FakeUI do
     :ets.insert(__MODULE__, fixtures)
   end
 
-  def read_player_type do
+  def read_player_type(_) do
     :undefined
   end
 
