@@ -18,5 +18,5 @@ defmodule GameUI do
   Logs a certain message, given by a key and an optional value
   """
   @typep message_type :: :wrong_index
-  @callback log(message_type, any) :: nil
+  @callback log(message_type, any) :: any
 end

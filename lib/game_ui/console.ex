@@ -15,6 +15,7 @@ defmodule GameUI.Console do
     IO.puts("Not a valid cell: #{invalid_input}")
   end
 
+  @spec print_matrix([[any]]) :: no_return()
   def print_matrix(matrix) do
     matrix
     |> Table.new
