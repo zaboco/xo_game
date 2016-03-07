@@ -28,7 +28,9 @@ defmodule Players do
 end
 
 defprotocol Player do
-  @spec get_move(t, Matrix.t) :: number
+  @type move :: {number, atom}
+
+  @spec get_move(t, Matrix.t) :: move
   def get_move(player, board)
 
   @spec show(t) :: String.t
