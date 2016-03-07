@@ -1,14 +1,15 @@
 defmodule Players do
   alias Players.{Human, Computer}
 
-  def make(type_reader) do
+  def make do
     [:x, :o]
-    |> Enum.map(fn sign -> make_one type_reader.(sign), sign end)
+    |> Enum.map(&make_one/1)
     |> List.to_tuple
   end
 
-  defp make_one(type, sign) do
-    case String.first(type) do
+  defp make_one(sign) do
+    type_initial = sign |> GameUI.impl.read_player_type |> String.first
+    case type_initial do
       "h" -> %Human{sign: sign}
       "c" -> %Computer{sign: sign}
     end
