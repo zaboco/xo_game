@@ -1,26 +1,26 @@
 defmodule Players.Human do
-  defstruct [sign: :x, ui: nil]
+  defstruct [sign: :x]
 
   defimpl Player do
-    def get_move(%{sign: sign, ui: ui}, board) do
-      print_board(ui, board)
-      {get_index(ui, board), sign}
+    def get_move(%{sign: sign}, board) do
+      print_board(board)
+      {get_index(board), sign}
     end
 
-    defp print_board(ui, board) do
+    defp print_board(board) do
       board
       |> Board.to_matrix(& &1 + 1)
       |> ui.print_matrix
     end
 
-    defp get_index(ui, board) do
+    defp get_index(board) do
       index_string = ui.read_index
       case parse_and_validate(index_string, board) do
         {:ok, index} ->
           index
         :error ->
           ui.log(:wrong_index, index_string)
-          get_index(ui, board)
+          get_index(board)
       end
     end
 
@@ -44,6 +44,8 @@ defmodule Players.Human do
         false -> :error
       end
     end
+
+    defp ui, do: Application.get_env(:xo_game, :ui)
 
     def show(%{sign: sign}) do
       "#{sign}(human)"

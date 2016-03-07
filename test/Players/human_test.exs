@@ -6,7 +6,11 @@ defmodule Players.HumanTest do
   @moduletag :rewrite
 
   @empty_board Board.empty(3)
-  @x_human %Human{sign: :x, ui: FakeUI}
+  @x_human %Human{sign: :x}
+
+  setup_all do
+    Application.put_env(:xo_game, :ui, FakeUI)
+  end
 
   setup do
     FakeUI.init
