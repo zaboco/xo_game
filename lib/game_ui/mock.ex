@@ -1,13 +1,15 @@
-defmodule Doubles.FakeUI do
+defmodule GameUI.Mock do
   @behaviour GameUI
 
-  def init do
-    :ets.new(__MODULE__, [:named_table])
-    will_return read_index: ["1"]
+  def will_return(fixtures) do
+    init_cache
+    :ets.insert(__MODULE__, fixtures)
   end
 
-  def will_return(fixtures) do
-    :ets.insert(__MODULE__, fixtures)
+  defp init_cache do
+    if :ets.info(__MODULE__) == :undefined do
+       :ets.new(__MODULE__, [:named_table])
+    end
   end
 
   def read_player_type(_) do
