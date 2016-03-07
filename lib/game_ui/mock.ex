@@ -13,7 +13,7 @@ defmodule GameUI.Mock do
   end
 
   def read_player_type(_) do
-    :undefined
+    consume_return_value :read_player_type
   end
 
   def log(message, param) do
@@ -21,8 +21,12 @@ defmodule GameUI.Mock do
   end
 
   def read_index do
-    [current | rest] = :ets.lookup_element(__MODULE__, :read_index, 2)
-    will_return read_index: rest
+    consume_return_value :read_index
+  end
+
+  defp consume_return_value(key) do
+    [current | rest] = :ets.lookup_element(__MODULE__, key, 2)
+    will_return [{key, rest}]
     current
   end
 

@@ -5,13 +5,12 @@ defmodule PlayersTest do
   @moduletag :rewrite
 
   test "make reads type for each sign and creates players of the given type" do
-    type_reader = fn :x -> "h"; :o -> "computer" end
-    expected_players = { %Human{sign: :x}, %Computer{sign: :o} }
-    assert expected_players == Players.make(type_reader)
+    GameUI.impl.will_return read_player_type: ["h", "computer"]
+    assert Players.make == {%Human{sign: :x}, %Computer{sign: :o}}
   end
 
   test "get_current_move gets the move from the current player" do
-    players = { %PlayerStub{sign: :x, move_index: 0}, :other_player }
+    players = {%PlayerStub{sign: :x, move_index: 0}, :other_player}
     assert {0, :x} == Players.get_current_move(players, Board.empty(3))
   end
 

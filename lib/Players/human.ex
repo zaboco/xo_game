@@ -10,16 +10,16 @@ defmodule Players.Human do
     defp print_board(board) do
       board
       |> Board.to_matrix(& &1 + 1)
-      |> ui.print_matrix
+      |> GameUI.impl.print_matrix
     end
 
     defp get_index(board) do
-      index_string = ui.read_index
+      index_string = GameUI.impl.read_index
       case parse_and_validate(index_string, board) do
         {:ok, index} ->
           index
         :error ->
-          ui.log(:wrong_index, index_string)
+          GameUI.impl.log(:wrong_index, index_string)
           get_index(board)
       end
     end
@@ -44,8 +44,6 @@ defmodule Players.Human do
         false -> :error
       end
     end
-
-    defp ui, do: Application.get_env(:xo_game, :ui)
 
     def show(%{sign: sign}) do
       "#{sign}(human)"

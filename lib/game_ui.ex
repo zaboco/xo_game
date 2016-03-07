@@ -1,4 +1,6 @@
 defmodule GameUI do
+  @type t :: GameUI
+
   @doc """
   Reads index for of the next move
   """
@@ -19,4 +21,7 @@ defmodule GameUI do
   """
   @typep message_type :: :wrong_index
   @callback log(message_type, any) :: any
+
+  @spec impl :: t
+  def impl, do: Application.get_env(:xo_game, :ui)
 end
