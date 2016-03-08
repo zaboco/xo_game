@@ -1,11 +1,11 @@
-defmodule PlayerStub do
-  defstruct sign: :x, move_index: 0
+defmodule Player.Stub do
+  use Player, :stub
 
-  defimpl Player do
-    def get_move(%{move_index: move_index, sign: sign}, _board) do
-      {move_index, sign}
-    end
+  def get_move_index(_sign, _board) do
+    move_index
+  end
 
-    def show(player), do: "Player #{player.sign}"
+  def move_index do
+    3
   end
 end

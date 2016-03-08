@@ -32,7 +32,7 @@ defmodule Matrix.NestedMatrix do
       {Enum.at(list, i), Enum.at(list, -(i + 1))}
     end
 
-    def map(%{rows: rows} = matrix, fun) do
+    def map(matrix, fun) do
       matrix
       |> Enum.map(fun)
       |> @for.from_enum

@@ -1,6 +1,6 @@
 defmodule Players.HumanTest do
   use ExUnit.Case
-  alias Players.Human
+  alias Player.Human
 
   @moduletag :rewrite
 

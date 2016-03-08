@@ -1,6 +1,6 @@
 defmodule PlayersTest do
   use ExUnit.Case
-  alias Players.{Human, Computer}
+  alias Player.{Human, Computer, Stub}
 
   @moduletag :rewrite
 
@@ -10,8 +10,9 @@ defmodule PlayersTest do
   end
 
   test "get_current_move gets the move from the current player" do
-    players = {%PlayerStub{sign: :x, move_index: 0}, :other_player}
-    assert {0, :x} == Players.get_current_move(players, Board.empty(3))
+    players = {%Stub{sign: :x}, :other_player}
+    move = Players.get_current_move(players, Board.empty(3))
+    assert move == {Stub.move_index, :x}
   end
 
   test "swap" do
@@ -19,7 +20,9 @@ defmodule PlayersTest do
   end
 
   test "show_current" do
-    assert "Player x" == Players.show_current({ %PlayerStub{}, :other_player })
+    players = {%Stub{sign: :x}, :other_player}
+    shown = Players.show_current(players)
+    assert shown == "x(stub)"
   end
 end
 
