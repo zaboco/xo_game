@@ -1,8 +1,6 @@
 defmodule Board do
   alias Matrix.LinearMatrix
 
-  @type sign :: :x | :o
-
   def empty(size) do
     0..(size * size - 1)
     |> Enum.map(&Cell.empty/1)

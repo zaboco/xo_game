@@ -1,5 +1,5 @@
 defmodule Players do
-  alias Players.{Human, Computer}
+  alias Player.{Human, Computer}
 
   def make do
     [:x, :o]
@@ -26,14 +26,4 @@ defmodule Players do
   def show_current({current, _other}) do
     Player.show current
   end
-end
-
-defprotocol Player do
-  @type move :: {number, atom}
-
-  @spec get_move(t, Matrix.t) :: move
-  def get_move(player, board)
-
-  @spec show(t) :: String.t
-  def show(player)
 end
