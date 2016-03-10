@@ -13,27 +13,27 @@ defmodule GameStateTest do
 
   @players Players.with_types({"human", "computer"})
 
-  test "evaluate_next for move that wins" do
+  test "eval_next for move that wins" do
     state = state_of board: ~m|_ x x : _ _ _ : _ _ _|
     expected = {:win, Players.show_current(@players)}
-    assert State.evaluate_next(state, move_to(0)) == expected
+    assert State.eval_next(state, move_to(0)) == expected
   end
 
-  test "evaluate_next for move that ends game as tie" do
+  test "eval_next for move that ends game as tie" do
     state = state_of board: ~m|
       _ o x
       o x o
       o x o|
     expected = {:tie}
-    assert State.evaluate_next(state, move_to(0)) == expected
+    assert State.eval_next(state, move_to(0)) == expected
   end
 
-  test "evaluate_next updates the state for neutral move" do
+  test "eval_next updates the state for neutral move" do
     state = state_of board: ~m|_ _ _ : _ _ _ : _ _ _|
     expected_state = state_of \
       board: ~m|x _ _ : _ _ _ : _ _ _|,
       players: Players.swap(@players)
-    assert State.evaluate_next(state, move_to(0)) == {:in_progress, expected_state}
+    assert State.eval_next(state, move_to(0)) == {:in_progress, expected_state}
   end
 
   defp state_of(board: matrix) do
