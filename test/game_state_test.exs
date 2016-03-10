@@ -1,11 +1,13 @@
 defmodule GameStateTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   import :meck
   import Board
 
-  test "starts with empty board and with given players" do
-    players = [{:x, :human}, {:o, :computer}]
-    assert GameState.initial(players) == {Board.empty, players}
+  @tag :rewrite
+  test "initial" do
+    make_players = fn -> :players end
+    expected_state = %GameState{board: Board.empty(3), players: :players}
+    assert GameState.initial(make_players) == expected_state
   end
 
   test "apply_move" do

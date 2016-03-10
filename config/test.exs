@@ -1,4 +1,7 @@
 use Mix.Config
 
 config :xo_game,
-  ui: GameUI.Mock
+  io: GameUI.MockIO,
+  messages: [
+    wrong_index: &"wrong_index: #{&1}"
+  ]

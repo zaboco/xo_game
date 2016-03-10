@@ -1,6 +1,7 @@
 defmodule Players.HumanTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   alias Player.Human
+  import GameUI.MockIO.Test
 
   @moduletag :rewrite
 
@@ -8,40 +9,50 @@ defmodule Players.HumanTest do
   @x_human %Human{sign: :x}
 
   test "get_move displays the board with indexes" do
-    GameUI.impl.will_return read_index: ["1"]
-    Player.get_move(@x_human, Board.empty(3))
-    assert_received {:print_matrix, [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]
-      ]}
+    with_inputs ["1"] do
+      Player.get_move(@x_human, Board.empty(3))
+      assert_output """
+        +---+---+---+
+        | 1 | 2 | 3 |
+        +---+---+---+
+        | 4 | 5 | 6 |
+        +---+---+---+
+        | 7 | 8 | 9 |
+        +---+---+---+
+        """
+    end
   end
 
   test "get_move uses the given index if valid" do
-    GameUI.impl.will_return read_index: ["1"]
-    assert @x_human |> Player.get_move(@empty_board) == {0, :x}
+    with_inputs ["1"] do
+      assert @x_human |> Player.get_move(@empty_board) == {0, :x}
+    end
   end
 
   test "get_move reads the index again if not a digit" do
-    GameUI.impl.will_return read_index: ["a", "1"]
-    assert @x_human |> Player.get_move(@empty_board) == {0, :x}
+    with_inputs ["a", "1"] do
+      assert @x_human |> Player.get_move(@empty_board) == {0, :x}
+    end
   end
 
   test "get_move reads the index again if cell not empty" do
     board = @empty_board |> Board.put(0, :x)
-    GameUI.impl.will_return read_index: ["1", "2"]
-    assert @x_human |> Player.get_move(board) == {1, :x}
+    with_inputs ["1", "2"] do
+      assert @x_human |> Player.get_move(board) == {1, :x}
+    end
   end
 
   test "get_move reads the index again if out of bounds" do
-    GameUI.impl.will_return read_index: ["0", "4"]
-    assert @x_human |> Player.get_move(@empty_board) == {3, :x}
+    with_inputs ["0", "4"] do
+      assert @x_human |> Player.get_move(@empty_board) == {3, :x}
+    end
   end
 
   test "get_move logs error message if wrong index" do
-    GameUI.impl.will_return read_index: ["0", "4"]
-    @x_human |> Player.get_move(@empty_board)
-    assert_received {:log, [:wrong_index, "0"]}
+    with_inputs ["0", "4"] do
+      @x_human |> Player.get_move(@empty_board)
+      assert_output "wrong_index: 0\n"
+    end
   end
 
   test "show" do

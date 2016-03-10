@@ -1,6 +1,8 @@
 defmodule GameState do
-  def initial players do
-    {Board.empty, players}
+  defstruct board: Board.empty(3), players: []
+
+  def initial(make_players \\ &Players.make/0) do
+    %GameState{players: make_players.()}
   end
 
   def check_status board do
