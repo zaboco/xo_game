@@ -1,8 +1,10 @@
 defmodule Player do
   @type t :: Player
   @type sign :: :x | :o
+  @type move_index :: 0..8
+  @type move :: {move_index, sign}
 
-  @callback get_move_index(sign, board :: Board.t) :: 0..8
+  @callback get_move_index(sign, board :: Board.t) :: move_index
   @callback as_string(sign) :: String.t
 
   defmacro __using__(type) do

@@ -10,5 +10,6 @@
   "meck": {:hex, :meck, "0.8.4"},
   "mimerl": {:hex, :mimerl, "1.0.2"},
   "mix_test_watch": {:hex, :mix_test_watch, "0.2.5"},
+  "short_maps": {:hex, :short_maps, "0.1.1"},
   "ssl_verify_hostname": {:hex, :ssl_verify_hostname, "1.0.5"},
   "table_rex": {:hex, :table_rex, "0.8.0"}}

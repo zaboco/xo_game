@@ -1,51 +1,49 @@
 defmodule GameStateTest do
-  use ExUnit.Case, async: false
-  import :meck
-  import Board
+  use ExUnit.Case
+  alias GameState, as: State
+  import Matrix.Sigils
 
-  @tag :rewrite
+  @moduletag :rewrite
+
   test "initial" do
     make_players = fn -> :players end
-    expected_state = %GameState{board: Board.empty(3), players: :players}
-    assert GameState.initial(make_players) == expected_state
+    expected_state = %State{board: Board.empty(3), players: :players}
+    assert State.initial(make_players) == expected_state
   end
 
-  test "apply_move" do
-    expect Board, :fill_cell, [:board, [at: 2, with: :x]], {:ok, :new_board}
-    new_state = GameState.apply_move {:board, :players}, {2, :x}
-    assert new_state == {:new_board, :players}
-    unload Board
+  @players Players.with_types({"human", "computer"})
+
+  test "evaluate_next for move that wins" do
+    state = state_of board: ~m|_ x x : _ _ _ : _ _ _|
+    expected = {:win, Players.show_current(@players)}
+    assert State.evaluate_next(state, move_to(0)) == expected
   end
 
-  test "check_status returns :win if any row is a winner" do
-    assert GameState.check_status(~b|x x x : _ _ _ : _ _ _|) == :win
-    assert GameState.check_status(~b|_ _ _ : o o o : _ _ _|) == :win
-    assert GameState.check_status(~b|_ _ _ : o x o : x x x|) == :win
-  end
-
-  test "check_status returns :win if any column is a winner" do
-    assert GameState.check_status(~b|x _ _ : x _ _ : x _ _|) == :win
-    assert GameState.check_status(~b|_ o _ : _ o _ : _ o _|) == :win
-  end
-
-  test "check_status returns :win if any diagonal is a winner" do
-    assert GameState.check_status(~b|x _ _ : _ x _ : _ _ x|) == :win
-    assert GameState.check_status(~b|_ _ o : _ o _ : o _ _|) == :win
-  end
-
-  test "check_status returns :tie if no winner and the board is full" do
-    assert GameState.check_status(~B"""
-      x o x
+  test "evaluate_next for move that ends game as tie" do
+    state = state_of board: ~m|
+      _ o x
       o x o
-      o x o
-    """) == :tie
+      o x o|
+    expected = {:tie}
+    assert State.evaluate_next(state, move_to(0)) == expected
   end
 
-  test "check_status returns :in_progress if neither :win nor :tie" do
-    assert GameState.check_status(~B"""
-      x o x
-      o x o
-      o x _
-    """) == :in_progress
+  test "evaluate_next updates the state for neutral move" do
+    state = state_of board: ~m|_ _ _ : _ _ _ : _ _ _|
+    expected_state = state_of \
+      board: ~m|x _ _ : _ _ _ : _ _ _|,
+      players: Players.swap(@players)
+    assert State.evaluate_next(state, move_to(0)) == {:in_progress, expected_state}
+  end
+
+  defp state_of(board: matrix) do
+    state_of board: matrix, players: @players
+  end
+  defp state_of(board: matrix, players: players) do
+    %State{board: Board.new(matrix), players: players}
+  end
+
+  defp move_to(index) do
+    fn(_players, _board) -> {index, :x} end
   end
 end
