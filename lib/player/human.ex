@@ -9,16 +9,16 @@ defmodule Player.Human do
   defp print_board(board) do
     board
     |> Board.to_matrix(& &1 + 1)
-    |> GameUI.impl.print_matrix
+    |> GameUI.print_matrix
   end
 
   defp get_index(board) do
-    index_string = GameUI.impl.read_index
+    index_string = GameUI.read_index
     case parse_and_validate(index_string, board) do
       {:ok, index} ->
         index
       :error ->
-        GameUI.impl.log(:wrong_index, index_string)
+        GameUI.log(:wrong_index, index_string)
         get_index(board)
     end
   end
@@ -32,7 +32,7 @@ defmodule Player.Human do
 
   defp parse_index(index_string) do
     case Integer.parse(index_string) do
-      {index, ""} -> {:ok, index - 1}
+      {index, _rest} -> {:ok, index - 1}
       :error -> :error
     end
   end

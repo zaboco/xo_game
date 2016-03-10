@@ -1,12 +1,14 @@
 defmodule PlayersTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   alias Player.{Human, Computer, Stub}
+  import GameUI.MockIO.Test
 
   @moduletag :rewrite
 
   test "make reads type for each sign and creates players of the given type" do
-    GameUI.impl.will_return read_player_type: ["h", "computer"]
-    assert Players.make == {%Human{sign: :x}, %Computer{sign: :o}}
+    with_inputs ["h", "computer"] do
+      assert Players.make == {%Human{sign: :x}, %Computer{sign: :o}}
+    end
   end
 
   test "get_current_move gets the move from the current player" do

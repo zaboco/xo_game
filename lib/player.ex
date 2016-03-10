@@ -1,4 +1,5 @@
 defmodule Player do
+  @type t :: Player
   @type sign :: :x | :o
 
   @callback get_move_index(sign, board :: Board.t) :: 0..8

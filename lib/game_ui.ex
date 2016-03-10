@@ -1,27 +1,35 @@
 defmodule GameUI do
-  @type t :: GameUI
+  alias TableRex.Table
 
-  @doc """
-  Reads index for of the next move
-  """
-  @callback read_index :: String.t
+  def read_index() do
+    :move_index |> format_message |> io.gets
+  end
 
-  @doc """
-  Reads player type ("human" or "computer")
-  """
-  @callback read_player_type(Board.sign) :: String.t
+  def read_player_type(sign) do
+    :player_type |> format_message([sign]) |> io.gets
+  end
 
-  @doc """
-  Prints the given matrix
-  """
-  @callback print_matrix([[any]]) :: nil
+  def print_matrix(matrix) do
+    matrix |> format_matrix |> io.write
+  end
 
-  @doc """
-  Logs a certain message, given by a key and an optional value
-  """
-  @typep message_type :: :wrong_index
-  @callback log(message_type, any) :: any
+  def log(message_type, arg) do
+    message_type |> format_message([arg]) |> io.puts
+  end
 
-  @spec impl :: t
-  def impl, do: Application.get_env(:xo_game, :ui)
+  defp format_message(code, args \\ nil) do
+    message = Application.get_env(:xo_game, :messages)[code]
+    case args do
+      nil -> message
+      args -> apply(message, args)
+    end
+  end
+
+  defp format_matrix(matrix) do
+    matrix
+    |> Table.new
+    |> Table.render!(horizontal_style: :all)
+  end
+
+  defp io, do: Application.get_env(:xo_game, :io)
 end
