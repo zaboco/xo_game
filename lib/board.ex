@@ -1,6 +1,8 @@
 defmodule Board do
   alias Matrix.LinearMatrix
 
+  @type status :: :in_progress | :tie | :win
+
   def empty(size) do
     0..(size * size - 1)
     |> Enum.map(&Cell.empty/1)
@@ -51,14 +53,6 @@ defmodule Board do
   defp full?(board) do
     board
     |> Enum.all?(&Cell.filled?/1)
-  end
-
-
-  # TODO: delete these
-  def sigil_b(_term, []) do
-  end
-
-  def sigil_B(_term, []) do
   end
 end
 

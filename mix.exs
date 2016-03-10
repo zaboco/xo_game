@@ -20,6 +20,7 @@ defmodule XoGame.Mixfile do
   defp deps do
     [
       {:table_rex, "~> 0.8.0"},
+      {:short_maps, "~> 0.1.1"},
       {:excoveralls, "~> 0.4", only: :test},
       {:meck, "~> 0.8.4", only: :test},
       {:dialyze, "~> 0.2.0", only: :dev},

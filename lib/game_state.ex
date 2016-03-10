@@ -1,57 +1,33 @@
 defmodule GameState do
+  alias GameState, as: State
+  import ShortMaps
+
+  @opaque t :: %State{}
   defstruct board: Board.empty(3), players: []
 
   def initial(make_players \\ &Players.make/0) do
-    %GameState{players: make_players.()}
+    %State{players: make_players.()}
   end
 
-  def check_status board do
-    cond do
-      is_win? board -> :win
-      is_full? board -> :tie
-      true -> :in_progress
+  def evaluate_next(state, get_current_move \\ &Players.get_current_move/2) do
+    updated_board = next_board(state, get_current_move)
+    case Board.check_status(updated_board) do
+      :in_progress ->
+        updated_players = Players.swap(state.players)
+        next_state = %State{board: updated_board, players: updated_players}
+        {:in_progress, next_state}
+      :win -> {:win, Players.show_current(state.players)}
+      :tie -> {:tie}
     end
   end
 
-  defp is_win? board do
-    [&rows/1, &columns/1, &diagonals/1]
-      |> Enum.flat_map(fn selector -> selector.(board) end)
-      |> Enum.any?(&same_items?/1)
+  defp next_board(~m(%State board players)a, get_current_move) do
+    players
+    |> get_current_move.(board)
+    |> apply_move(board)
   end
 
-  defp rows matrix do
-    matrix
-  end
-
-  defp columns matrix do
-    matrix |> List.zip |> Enum.map(&Tuple.to_list/1)
-  end
-
-  def diagonals matrix do
-    matrix
-      |> Enum.with_index
-      |> Enum.map(fn {row, i} ->
-        { Enum.at(row, i), Enum.at(row, -(i+1)) }
-      end)
-      |> Enum.unzip
-      |> Tuple.to_list
-  end
-
-  defp same_items? list do
-    case list do
-      [] -> true
-      [x | xs] -> Enum.all? xs, &(&1 == x)
-    end
-  end
-
-  defp is_full? board do
-    Enum.all? board, fn row ->
-      Enum.all? row, &(&1 in [:x, :o])
-    end
-  end
-
-  def apply_move({board, players}, {index, sign}) do
-    {:ok, new_board} = board |> Board.fill_cell(at: index, with: sign)
-    {new_board, players}
+  defp apply_move({index, sign}, board) do
+    Board.put(board, index, sign)
   end
 end
