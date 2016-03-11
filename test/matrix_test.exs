@@ -3,8 +3,6 @@ defmodule MatrixTest do
     quote do
       use ExUnit.Case
 
-      @moduletag :rewrite
-
       test "can create new matrix form enumerable" do
         assert from_enum(1..4) |> Matrix.rows == [[1, 2], [3, 4]]
       end

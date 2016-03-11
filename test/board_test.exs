@@ -2,8 +2,6 @@ defmodule BoardTest do
   use ExUnit.Case
   import Matrix.Sigils, only: [sigil_m: 2]
 
-  @moduletag :rewrite
-
   @empty_board  Board.empty(3)
   @some_board   Board.new ~m|x _ _ : _ o _ : _ _ x|
 

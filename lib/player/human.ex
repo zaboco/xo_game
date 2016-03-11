@@ -18,7 +18,7 @@ defmodule Player.Human do
       {:ok, index} ->
         index
       :error ->
-        GameUI.log(:wrong_index, index_string)
+        GameUI.log(:wrong_index, [index_string])
         get_index(board)
     end
   end

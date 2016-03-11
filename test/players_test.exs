@@ -3,8 +3,6 @@ defmodule PlayersTest do
   alias Player.{Human, Computer, Stub}
   import GameUI.MockIO.Test
 
-  @moduletag :rewrite
-
   test "make reads type for each sign and creates players of the given type" do
     with_inputs ["h", "computer"] do
       assert Players.make == {%Human{sign: :x}, %Computer{sign: :o}}

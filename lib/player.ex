@@ -1,5 +1,5 @@
 defmodule Player do
-  @type t :: Player
+  @type t :: %{}
   @type sign :: :x | :o
   @type move_index :: 0..8
   @type move :: {move_index, sign}

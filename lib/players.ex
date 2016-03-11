@@ -15,7 +15,7 @@ defmodule Players do
     {make_one(first_type, :x), make_one(second_type, :o)}
   end
 
-  @spec make_one(String.t, Player.sign) :: t
+  @spec make_one(String.t, Player.sign) :: Player.t
   defp make_one(type, sign) do
     case String.first(type) do
       "h" -> %Human{sign: sign}

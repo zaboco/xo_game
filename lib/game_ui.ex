@@ -2,25 +2,33 @@ defmodule GameUI do
   alias TableRex.Table
 
   def read_index() do
-    :move_index |> format_message |> io.gets
+    ask(:move_index)
   end
 
   def read_player_type(sign) do
-    :player_type |> format_message([sign]) |> io.gets
+    ask(:player_type, [sign])
+  end
+
+  def read_play_again() do
+    ask(:play_again) |> String.strip |> String.downcase
+  end
+
+  defp ask(question_type, args \\ []) do
+    question_type |> format_message(args) |> io.gets
   end
 
   def print_matrix(matrix) do
     matrix |> format_matrix |> io.write
   end
 
-  def log(message_type, arg) do
-    message_type |> format_message([arg]) |> io.puts
+  def log(message_type, args \\ []) do
+    message_type |> format_message(args) |> io.puts
   end
 
-  defp format_message(code, args \\ nil) do
+  defp format_message(code, args) do
     message = Application.get_env(:xo_game, :messages)[code]
     case args do
-      nil -> message
+      [] -> message
       args -> apply(message, args)
     end
   end

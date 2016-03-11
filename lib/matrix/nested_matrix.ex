@@ -44,12 +44,10 @@ defmodule Matrix.NestedMatrix do
       Enumerable.reduce(List.flatten(rows), acc, reducer)
     end
 
-    def member?(%{rows: rows}, value) do
-      Enumerable.member?(List.flatten(rows), value)
+    def member?(_, _) do
     end
 
-    def count(%{rows: rows}) do
-      Enumerable.count(List.flatten(rows))
+    def count(_) do
     end
   end
 end
