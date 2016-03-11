@@ -10,7 +10,8 @@ defmodule GameUI.MockIO.Test do
 
   defmacro assert_output(output) do
     quote do
-      assert_received {:output, unquote(output)}
+      expected_output = unquote(output)
+      assert_received {:output, ^expected_output}
     end
   end
 end

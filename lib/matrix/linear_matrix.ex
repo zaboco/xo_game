@@ -40,12 +40,10 @@ defmodule Matrix.LinearMatrix do
       Enumerable.reduce(items, acc, reducer)
     end
 
-    def member?(%{items: items}, value) do
-      Enumerable.member?(items, value)
+    def member?(_, _) do
     end
 
-    def count(%{items: items}) do
-      Enumerable.count(items)
+    def count(_) do
     end
   end
 end

@@ -3,8 +3,6 @@ defmodule Players.HumanTest do
   alias Player.Human
   import GameUI.MockIO.Test
 
-  @moduletag :rewrite
-
   @empty_board Board.empty(3)
   @x_human %Human{sign: :x}
 
