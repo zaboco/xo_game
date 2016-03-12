@@ -1,20 +1,15 @@
 # XoGame
 
-**TODO: Add description**
+Tic-Tac-Toe game written in Elixir, for fun and learning.
 
-## Installation
+### Usage
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+> have [elixir installed](http://elixir-lang.org/install.html) (or just erlang, it is sufficient for running the app)
 
-  1. Add xo_game to your list of dependencies in `mix.exs`:
-
-        def deps do
-          [{:xo_game, "~> 0.0.1"}]
-        end
-
-  2. Ensure xo_game is started before your application:
-
-        def application do
-          [applications: [:xo_game]]
-        end
+```sh
+$ git clone https://github.com/zaboco/xo_game.git && cd xo_game
+$ mix deps.get
+$ mix escript.build
+$ ./xo_game
+```
 
