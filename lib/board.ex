@@ -34,6 +34,10 @@ defmodule Board do
   end
   def empty_at?(_board, _index), do: false
 
+  def empty_cell_indexes(board) do
+    Enum.filter_map(board, &Cell.empty?/1, &Cell.index/1)
+  end
+
   def check_status(board) do
     cond do
       winner? board -> :win
@@ -63,6 +67,8 @@ defmodule Cell do
   def empty(index) do
     {@void, index}
   end
+
+  def index({_sign, index}), do: index
 
   def show(cell, void_modifier \\ &(&1)) do
     case cell do
