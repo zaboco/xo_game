@@ -2,9 +2,10 @@ use Mix.Config
 
 config :xo_game,
   io: IO,
+  coloring_enabled: true,
   messages: [
     move_index: "Choose an empty cell: ",
-    player_type: &"Choose type for #{&1} - [h]uman / [c]omputer: ",
+    player_type: &"Choose type for #{&1} - [H]uman / [c]omputer: ",
     play_again: "Play again? (Y/n) ",
     wrong_index: &"Not a valid cell: #{&1}",
     player_turn: &"\nIt is #{&1}'s turn:",
