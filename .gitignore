@@ -1,5 +1,6 @@
 /_build
 /cover
 /deps
+xo_game
 erl_crash.dump
 *.ez

@@ -1,85 +1,98 @@
 defmodule Board do
-  alias TableRex.Table
-  @size 3
+  alias Matrix.LinearMatrix
 
-  def empty, do: ~b|_ _ _ : _ _ _ : _ _ _|
+  @type status :: :in_progress | :tie | :win
 
-  def is_cell_empty? board, cell_index do
-    board |> List.flatten |> Enum.any?(&(&1 == cell_index))
+  def empty(size) do
+    0..(size * size - 1)
+    |> Enum.map(&Cell.empty/1)
+    |> LinearMatrix.from_enum
   end
 
-  def fill_cell(board, at: index, with: sign) do
-    new_board = Enum.map board, fn row ->
-      replace_in row, index, sign
-    end
-    case new_board do
-      ^board -> {:error, "Invalid cell: #{index}"}
-      valid_board -> {:ok, valid_board}
-    end
+  def new(rows) do
+    rows
+    |> List.flatten
+    |> Enum.with_index
+    |> LinearMatrix.from_enum
   end
 
-  defp replace_in list, old, new do
-    Enum.map list, fn
-      ^old -> new
-      other -> other
-    end
+  def to_matrix(board, void_modifier \\ &(&1)) do
+    board
+    |> Matrix.map(&Cell.show &1, void_modifier)
+    |> Matrix.rows
   end
 
-  def sigil_b(term, []) do
-    matrix_from_string term, ":"
+  def put(board, index, sign) do
+    board
+    |> Matrix.map(&Cell.fill &1, if_at: index, with: sign)
   end
 
-  def sigil_B(term, []) do
-    matrix_from_string term, "\n"
+  def empty_at?(board, index) when index >= 0 do
+    board
+    |> Enum.at(index)
+    |> Cell.empty?
+  end
+  def empty_at?(_board, _index), do: false
+
+  def empty_cell_indexes(board) do
+    Enum.filter_map(board, &Cell.empty?/1, &Cell.index/1)
   end
 
-  defp matrix_from_string string, separator do
-    string
-      |> String.strip
-      |> String.split(separator)
-      |> Enum.map(&to_atoms/1)
-      |> fill_matrix_with_indexes(@size)
-  end
-
-  def fill_matrix_with_indexes(matrix, size) do
-    matrix
-      |> Enum.with_index
-      |> Enum.map(fn {row, i} ->
-        fill_list_with_indexes row, size * i
-      end)
-  end
-
-  def fill_list_with_indexes(list, offset \\ 0) do
-    list
-      |> Enum.with_index(offset)
-      |> Enum.map(fn
-        {:_, i} -> i
-        {other, _i} -> other
-      end)
-  end
-
-  def print_with_indexes board do
-    board |> print_matrix
-  end
-
-  def print board do
-    board |> remove_indexes |> print_matrix
-  end
-
-  defp remove_indexes board do
-    Enum.map board, fn row ->
-      Enum.map row, fn
-        index when index in 0..8 -> " "
-        other -> other
-      end
+  def check_status(board) do
+    cond do
+      winner? board -> :win
+      full? board -> :tie
+      true -> :in_progress
     end
   end
 
-  defp print_matrix matrix do
-    Table.new(matrix) |> Table.render!(horizontal_style: :all) |> IO.write
+  defp winner?(board) do
+    lines =
+      Matrix.rows(board) ++
+      Matrix.columns(board) ++
+      Tuple.to_list(Matrix.diagonals board)
+    Enum.any? lines, &Cell.all_the_same?/1
   end
 
-  defp to_atoms(string) do
-    String.split(string) |> Enum.map(&String.to_atom/1)
+  defp full?(board) do
+    board
+    |> Enum.all?(&Cell.filled?/1)
   end
+end
+
+defmodule Cell do
+  @void :_
+  @signs [:x, :o]
+
+  def empty(index) do
+    {@void, index}
+  end
+
+  def index({_sign, index}), do: index
+
+  def show(cell, void_modifier \\ &(&1)) do
+    case cell do
+      {@void, index} -> void_modifier.(index)
+      {sign, _index} -> sign
+    end
+  end
+
+  def fill(cell, if_at: index, with: sign) when sign in @signs do
+    case cell do
+      {@void, ^index} -> {sign, index}
+      existing_cell -> existing_cell
+    end
+  end
+
+  def filled?({@void, _i}), do: false
+  def filled?(_), do: true
+
+  def empty?(cell), do: !filled?(cell)
+
+  def all_the_same?([first | rest]) do
+    Enum.all? rest, &same_sign_as?(&1, first)
+  end
+
+  defp same_sign_as?({sign, _i}, {sign, _j}), do: sign != @void
+  defp same_sign_as?(_, _), do: false
 end
