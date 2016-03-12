@@ -18,8 +18,8 @@ defmodule Game do
 
   def stop do
     case GameUI.read_play_again do
-      ok when ok in ["y", ""] -> Game.start
-      _ -> GameUI.log(:goodbye)
+      "n" -> GameUI.log(:goodbye)
+      _ -> Game.start
     end
   end
 end

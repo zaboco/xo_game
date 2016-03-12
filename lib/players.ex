@@ -5,6 +5,7 @@ defmodule Players do
 
   @spec make((Player.sign -> String.t)) :: t
   def make(read_player_type \\ &GameUI.read_player_type/1) do
+    GameUI.clear_screen
     [:x, :o]
     |> Enum.map(&make_one read_player_type.(&1), &1)
     |> List.to_tuple
@@ -18,8 +19,8 @@ defmodule Players do
   @spec make_one(String.t, Player.sign) :: Player.t
   defp make_one(type, sign) do
     case String.first(type) do
-      "h" -> %Human{sign: sign}
-      _ -> %Computer{sign: sign}
+      "c" -> %Computer{sign: sign}
+      _ -> %Human{sign: sign}
     end
   end
 
