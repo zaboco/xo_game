@@ -33,7 +33,7 @@ defmodule GameUI do
     message = Application.get_env(:xo_game, :messages)[code]
     case args do
       [] -> message
-      args -> apply(message, args)
+      [arg] -> String.replace(message, ":arg", to_string(arg))
     end
   end
 

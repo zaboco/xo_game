@@ -14,9 +14,9 @@ defmodule Player.Human do
 
   defp get_index(board) do
     index_string = GameUI.read_index
-    GameUI.clear_screen
     case parse_and_validate(index_string, board) do
       {:ok, index} ->
+        GameUI.clear_screen
         index
       :error ->
         GameUI.log(:wrong_index, [index_string])

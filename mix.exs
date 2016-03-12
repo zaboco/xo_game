@@ -5,6 +5,7 @@ defmodule XoGame.Mixfile do
     [app: :xo_game,
      version: "0.0.1",
      elixir: "~> 1.2",
+     escript: [main_module: XoGame],
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      consolidate_protocols: Mix.env != :test,
