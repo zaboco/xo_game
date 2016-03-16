@@ -52,6 +52,24 @@ defmodule Player.ComputerTest do
     assert Computer.get_move_index(:x, board) == 1
   end
 
+  test "get_move_index 2" do
+    board = Board.new ~m|
+      o o x
+      _ _ _
+      _ _ x|
+    assert Computer.get_move_index(:x, board) == 5
+  end
+
+  @tag timeout: 10000
+  @tag :skip
+  test "get_move_index empty" do
+    board = Board.new ~m|
+      _ _ _
+      _ _ _
+      _ _ _|
+    assert Computer.get_move_index(:x, board) == 0
+  end
+
   defp choice_of(index, board, sign \\ :x) do
     Choice.new board, Move.new(index, sign)
   end
