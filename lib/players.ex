@@ -24,7 +24,7 @@ defmodule Players do
     end
   end
 
-  @spec get_current_move(t, Board.t) :: Player.move
+  @spec get_current_move(t, Board.t) :: Player.Move.t
   def get_current_move({current, _other}, board) do
     Player.get_move current, board
   end
