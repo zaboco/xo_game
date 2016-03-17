@@ -60,7 +60,7 @@ defmodule Player.ComputerTest do
     assert Computer.get_move_index(:x, board) == 5
   end
 
-  @tag timeout: 10000
+  @tag timeout: 30000
   @tag :skip
   test "get_move_index empty" do
     board = Board.new ~m|

@@ -6,10 +6,11 @@ defmodule Player.Computer do
     @type t :: {:known, integer} | {:unknown, (() -> t)}
 
     @unit 1
+    @max {:known, @unit}
 
-    def max, do: {:known, @unit}
+    def max, do: @max
     def zero, do: {:known, 0}
-    def min, do: {:known, -@unit}
+    def min, do: negate @max
     def unknown(generator), do: {:unknown, generator}
 
     @spec expand(t) :: t
@@ -21,6 +22,17 @@ defmodule Player.Computer do
 
     @spec max?(t) :: boolean
     def max?(score), do: score == max
+
+    @spec best_in([t]) :: t
+    def best_in(scores) do
+      expanded_scores = Enum.reduce_while scores, [], fn score, prev_scores ->
+        case expand(score) do
+          @max -> {:halt, [{@max, score} | prev_scores]}
+          other -> {:cont, [{other, score} | prev_scores]}
+        end
+      end
+      expanded_scores |> Enum.max |> elem(1)
+    end
   end
 
   defmodule Choice do
@@ -51,14 +63,8 @@ defmodule Player.Computer do
     @spec best_of([t]) :: t
     def best_of(choices) do
       choices_map = Map.new(choices, &{pre_evaluate(&1), &1})
-      Map.get(choices_map, Score.max, best_in_map(choices_map))
-    end
-
-    @spec best_in_map(%{Score.t => t}) :: t
-    defp best_in_map(choices_map) do
-      choices_map
-      |> Enum.max_by(fn {score, _choice} -> Score.expand(score) end)
-      |> elem(1)
+      best_score = Score.best_in(Map.keys choices_map)
+      Map.get(choices_map, best_score)
     end
 
     @spec all_for(Board.t, Player.sign) :: [t]
