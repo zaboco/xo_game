@@ -44,7 +44,7 @@ defmodule Player.ComputerTest do
     assert Choice.evaluate(choice_of 1, board, :o) == Score.zero
   end
 
-  test "get_move_index" do
+  test "get_move_index returns index of best choice" do
     board = Board.new ~m|
       _ _ x
       o x x
@@ -52,7 +52,7 @@ defmodule Player.ComputerTest do
     assert Computer.get_move_index(:x, board) == 1
   end
 
-  test "get_move_index 2" do
+  test "get_move_index returns index of immediate win" do
     board = Board.new ~m|
       o o x
       _ _ _
@@ -60,14 +60,38 @@ defmodule Player.ComputerTest do
     assert Computer.get_move_index(:x, board) == 5
   end
 
-  @tag timeout: 30000
-  @tag :skip
-  test "get_move_index empty" do
+  @corners [0, 2, 6, 8]
+  test "get_move_index is a corner for empty board" do
+    board = Board.empty(3)
+    assert Computer.get_move_index(:x, board) in @corners
+  end
+
+  test "get_move_index is the center for one-cell board with empty center" do
     board = Board.new ~m|
-      _ _ _
+      x _ _
       _ _ _
       _ _ _|
-    assert Computer.get_move_index(:x, board) == 0
+    assert Computer.get_move_index(:o, board) == 4
+  end
+
+  test "get_move_index is a corner for board with only one cell, when center" do
+    board = Board.new ~m|
+      _ _ _
+      _ x _
+      _ _ _|
+    assert Computer.get_move_index(:o, board) in @corners
+  end
+
+  test "score_matrix" do
+    board = Board.new ~m|
+      o _ x
+      _ x _
+      o _ _|
+    assert Computer.score_matrix(board, :x) == [
+      [:o, -1, :x],
+      [ 0, :x, -1],
+      [:o, -1, -1]
+    ]
   end
 
   defp choice_of(index, board, sign \\ :x) do

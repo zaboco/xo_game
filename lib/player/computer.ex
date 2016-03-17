@@ -82,10 +82,47 @@ defmodule Player.Computer do
     def move_index(%{move: move}), do: Move.index(move)
   end
 
+  def score_matrix(board, sign) do
+    Board.to_matrix board, fn index ->
+      choice = Choice.new(board, Move.new(index, sign))
+      {:known, score} = Choice.evaluate(choice)
+      score
+    end
+  end
+
+  @size 3
   def get_move_index(sign, board) do
+    filled_cell_indexes = 0..(@size * @size - 1) |> Enum.filter(&!Board.empty_at? board, &1)
+    case filled_cell_indexes do
+      [] -> opening_for_empty_board(@size)
+      [index] -> opening_for_one_cell_board(index, @size)
+      _ -> calculate_best_index(sign, board)
+    end
+  end
+
+  defp calculate_best_index(sign, board) do
     board
     |> Choice.all_for(sign)
     |> Choice.best_of
     |> Choice.move_index
+  end
+
+  defp opening_for_empty_board(size) do
+    random_corner size
+  end
+
+  defp opening_for_one_cell_board(index, size) do
+    case center size do
+      ^index -> random_corner size
+      center -> center
+    end
+  end
+
+  defp random_corner(size) do
+    Enum.random [0, size - 1, size * (size - 1), size * size - 1]
+  end
+
+  defp center(size) do
+    div(size * size, 2)
   end
 end
