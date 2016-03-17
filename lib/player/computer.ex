@@ -25,13 +25,17 @@ defmodule Player.Computer do
 
     @spec best_in([t]) :: t
     def best_in(scores) do
-      expanded_scores = Enum.reduce_while scores, [], fn score, prev_scores ->
-        case expand(score) do
-          @max -> {:halt, [{@max, score} | prev_scores]}
-          other -> {:cont, [{other, score} | prev_scores]}
-        end
+      scores
+      |> Enum.reduce_while([], &do_lazy_expand/2)
+      |> Enum.max
+      |> elem(1)
+    end
+
+    defp do_lazy_expand(score, prev_scores) do
+      case expand(score) do
+        @max -> {:halt, [{@max, score} | prev_scores]}
+        other -> {:cont, [{other, score} | prev_scores]}
       end
-      expanded_scores |> Enum.max |> elem(1)
     end
   end
 
