@@ -1,4 +1,4 @@
-defmodule Players.HumanTest do
+defmodule Player.HumanTest do
   use ExUnit.Case, async: false
   alias Player.Human
   import GameUI.MockIO.Test

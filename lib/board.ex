@@ -2,6 +2,7 @@ defmodule Board do
   alias Matrix.LinearMatrix
 
   @type status :: :in_progress | :tie | :win
+  @type t :: Matrix.t
 
   def empty(size) do
     0..(size * size - 1)

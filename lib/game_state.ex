@@ -1,5 +1,6 @@
 defmodule GameState do
   alias GameState, as: State
+  alias Player.Move
   import ShortMaps
 
   @opaque t :: %State{}
@@ -20,7 +21,7 @@ defmodule GameState do
     Map.update! state, :board, fn board ->
       state.players
       |> get_current_move.(board)
-      |> apply_move(board)
+      |> Move.apply_to(board)
       |> print_board
     end
   end
@@ -33,10 +34,6 @@ defmodule GameState do
     |> GameUI.print_matrix
 
     board
-  end
-
-  defp apply_move({index, sign}, board) do
-    Board.put(board, index, sign)
   end
 
   defp eval_temporary_state(~m(%State board players)a = state) do
