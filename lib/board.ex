@@ -1,6 +1,4 @@
 defmodule Board do
-  alias Matrix.LinearMatrix, as: Matrix
-
   @type status :: :in_progress | :tie | :win
   @type t :: Matrix.t
 

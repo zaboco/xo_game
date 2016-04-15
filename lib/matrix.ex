@@ -1,30 +1,43 @@
-defmodule Matrix.Behaviour do
-  @callback from_enum(Enumerable.t) :: Matrix.t
-  @callback from_enum(Enumerable.t, number) :: Matrix.t
-  @callback from_rows([[any]]) :: Matrix.t
+defmodule Matrix do
+  def from_enum(enumerable) do
+    Enum.to_list(enumerable)
+  end
 
-  defmacro __using__(_) do
-    quote do
-      @behaviour Matrix.Behaviour
+  def rows(items) do
+    Enum.chunk items, width
+  end
 
-      def from_enum(enumerable) do
-        width = enumerable |> Enum.to_list |> length |> :math.sqrt |> round
-        from_enum enumerable, width
-      end
+  def columns(items) do
+    for i <- 0..width - 1 do
+      items |> Enum.drop(i) |> Enum.take_every(width)
     end
   end
-end
 
-defprotocol Matrix do
-  @spec rows(t) :: [[any]]
-  def rows(matrix)
+  def diagonals(items) do
+    first_diagonal = items |> Enum.take_every(width + 1)
+    second_diagonal = items
+      |> Stream.take_every(width - 1)
+      |> Enum.slice(1, width)
+    {first_diagonal, second_diagonal}
+  end
 
-  @spec columns(t) :: [[any]]
-  def columns(matrix)
+  def map(items, fun) do
+    Enum.map(items, fun)
+  end
 
-  @spec diagonals(t) :: {[any], [any]}
-  def diagonals(matrix)
+  defp width do
+    3
+  end
 
-  @spec map(t, (any -> any)) :: t
-  def map(matrix, fun)
+  defimpl Enumerable do
+    def reduce(%{items: items}, acc, reducer) do
+      Enumerable.reduce(items, acc, reducer)
+    end
+
+    def member?(_, _) do
+    end
+
+    def count(_) do
+    end
+  end
 end
