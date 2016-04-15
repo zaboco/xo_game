@@ -1,5 +1,5 @@
 defmodule Board do
-  alias Matrix.LinearMatrix
+  alias Matrix.LinearMatrix, as: Matrix
 
   @type status :: :in_progress | :tie | :win
   @type t :: Matrix.t
@@ -7,7 +7,7 @@ defmodule Board do
   def empty(size) do
     0..(size * size - 1)
     |> Enum.map(&Cell.empty/1)
-    |> LinearMatrix.from_enum
+    |> Matrix.from_enum
   end
 
   def new(rows) do
@@ -18,7 +18,7 @@ defmodule Board do
         {:_, index} -> index
         {sign, _index} -> sign
       end)
-    |> LinearMatrix.from_enum
+    |> Matrix.from_enum
   end
 
   def to_matrix(board, void_modifier \\ &(&1)) do

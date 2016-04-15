@@ -39,10 +39,6 @@ defmodule MatrixTest do
   end
 end
 
-defmodule LinearMatrixTest do
-  use MatrixTest, Matrix.LinearMatrix
-end
-
 defmodule NestedMatrixTest do
   use MatrixTest, Matrix.NestedMatrix
 end
