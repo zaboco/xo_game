@@ -14,6 +14,10 @@ defmodule Board do
     rows
     |> List.flatten
     |> Enum.with_index
+    |> Enum.map(fn
+        {:_, index} -> index
+        {sign, _index} -> sign
+      end)
     |> LinearMatrix.from_enum
   end
 
@@ -36,7 +40,7 @@ defmodule Board do
   def empty_at?(_board, _index), do: false
 
   def empty_cell_indexes(board) do
-    Enum.filter_map(board, &Cell.empty?/1, &Cell.index/1)
+    Enum.filter(board, &is_integer/1)
   end
 
   def check_status(board) do
@@ -66,34 +70,29 @@ defmodule Cell do
   @signs [:x, :o]
 
   def empty(index) do
-    {@void, index}
+    index
   end
 
-  def index({_sign, index}), do: index
-
-  def show(cell, void_modifier \\ &(&1)) do
+  def show(cell, void_modifier) do
     case cell do
-      {@void, index} -> void_modifier.(index)
-      {sign, _index} -> sign
+      index when is_integer(index) -> void_modifier.(index)
+      sign -> sign
     end
   end
 
   def fill(cell, if_at: index, with: sign) when sign in @signs do
     case cell do
-      {@void, ^index} -> {sign, index}
+      ^index -> sign
       existing_cell -> existing_cell
     end
   end
 
-  def filled?({@void, _i}), do: false
+  def filled?(cell) when is_integer(cell), do: false
   def filled?(_), do: true
 
   def empty?(cell), do: !filled?(cell)
 
   def all_the_same?([first | rest]) do
-    Enum.all? rest, &same_sign_as?(&1, first)
+    Enum.all? rest, & &1 == first
   end
-
-  defp same_sign_as?({sign, _i}, {sign, _j}), do: sign != @void
-  defp same_sign_as?(_, _), do: false
 end
