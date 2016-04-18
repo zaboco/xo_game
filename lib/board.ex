@@ -2,43 +2,43 @@ defmodule Board do
   @type status :: :in_progress | :tie | :win
   @type t :: Matrix.t
 
-  def empty(size) do
-    0..(size * size - 1)
-    |> Enum.map(&Cell.empty/1)
-    |> Matrix.from_enum
+  @valid_indexes 0..8
+
+  def empty(_size \\ size) do
+    List.duplicate nil, size * size
   end
 
   def new(rows) do
     rows
     |> List.flatten
-    |> Enum.with_index
     |> Enum.map(fn
-        {:_, index} -> index
-        {sign, _index} -> sign
+        :_ -> nil
+        sign -> sign
       end)
-    |> Matrix.from_enum
   end
 
   def to_matrix(board, void_modifier \\ &(&1)) do
     board
-    |> Matrix.map(&Cell.show &1, void_modifier)
-    |> Matrix.rows
+    |> Enum.with_index
+    |> Enum.map(&Cell.show &1, void_modifier)
+    |> Enum.chunk(size)
   end
 
-  def put(board, index, sign) do
+  def put(board, index, sign) when is_integer(index) do
+    case Enum.at(board, index) do
+      nil ->
+        List.replace_at(board, index, sign)
+      _ ->
+        board
+    end
+  end
+  def put(_board, _index, _sign), do: :error
+
+  def indexes_where(board, cell_predicate) do
     board
-    |> Matrix.map(&Cell.fill &1, if_at: index, with: sign)
-  end
-
-  def empty_at?(board, index) when index >= 0 do
-    board
-    |> Enum.at(index)
-    |> Cell.empty?
-  end
-  def empty_at?(_board, _index), do: false
-
-  def empty_cell_indexes(board) do
-    Enum.filter(board, &is_integer/1)
+    |> Enum.with_index
+    |> Enum.filter(fn {cell, i} -> cell_predicate.(cell) end)
+    |> Enum.map(& elem &1, 1)
   end
 
   def check_status(board) do
@@ -58,38 +58,21 @@ defmodule Board do
   end
 
   defp full?(board) do
-    board
-    |> Enum.all?(&Cell.filled?/1)
+    Enum.all?(board, & not is_nil &1)
   end
+
+  def size, do: 3
 end
 
 defmodule Cell do
-  @void :_
-  @signs [:x, :o]
-
-  def empty(index) do
-    index
-  end
-
-  def show(cell, void_modifier) do
+  def show({cell, index}, void_modifier) do
     case cell do
-      index when is_integer(index) -> void_modifier.(index)
+      nil -> void_modifier.(index)
       sign -> sign
     end
   end
 
-  def fill(cell, if_at: index, with: sign) when sign in @signs do
-    case cell do
-      ^index -> sign
-      existing_cell -> existing_cell
-    end
-  end
-
-  def filled?(cell) when is_integer(cell), do: false
-  def filled?(_), do: true
-
-  def empty?(cell), do: !filled?(cell)
-
+  def all_the_same?([nil | _]), do: false
   def all_the_same?([first | rest]) do
     Enum.all? rest, & &1 == first
   end

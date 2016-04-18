@@ -2,7 +2,7 @@ defmodule BoardTest do
   use ExUnit.Case
   import Matrix.Sigils, only: [sigil_m: 2]
 
-  @empty_board  Board.empty(3)
+  @empty_board  Board.empty
   @some_board   Board.new ~m|x _ _ : _ o _ : _ _ x|
 
   ## to_matrix
@@ -29,27 +29,20 @@ defmodule BoardTest do
   end
 
   test "put leaves the board unchanged if the cell is filled" do
-    assert @some_board |> Board.put(0, :x) == @some_board
+    assert @some_board |> Board.put(0, :o) == @some_board
   end
 
   test "put also does nothing when the index is invalid" do
     assert @some_board |> Board.put(20, :x) == @some_board
     assert @some_board |> Board.put(-5, :x) == @some_board
-    assert @some_board |> Board.put(:not_an_index, :x) == @some_board
   end
 
-  ## empty_at?
-  test "empy_at? ok" do
-    assert @some_board |> Board.empty_at?(1) == true
+  test "put returns :error if the index is not an integer" do
+    assert @some_board |> Board.put(:not_an_index, :x) == :error
   end
 
-  test "empty_at? false for filled cell" do
-    assert @some_board |> Board.empty_at?(0) == false
-  end
-
-  test "empty_at? false for outbound index" do
-    assert @some_board |> Board.empty_at?(10) == false
-    assert @some_board |> Board.empty_at?(-2) == false
+  test "indexes_where" do
+    assert @some_board |> Board.indexes_where(& not is_nil &1) == [0, 4, 8]
   end
 
   ## check_status

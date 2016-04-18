@@ -74,7 +74,7 @@ defmodule Player.Computer do
     @spec all_for(Board.t, Player.sign) :: [t]
     def all_for(board, sign) do
       board
-      |> Board.empty_cell_indexes
+      |> Board.indexes_where(&is_nil/1)
       |> Stream.map(&Move.new &1, sign)
       |> Enum.map(&%Choice{move: &1, board: board})
     end
@@ -92,7 +92,7 @@ defmodule Player.Computer do
 
   @size 3
   def get_move_index(sign, board) do
-    filled_cell_indexes = 0..(@size * @size - 1) |> Enum.filter(&!Board.empty_at? board, &1)
+    filled_cell_indexes = Board.indexes_where(board, & not is_nil &1)
     case filled_cell_indexes do
       [] -> opening_for_empty_board(@size)
       [index] -> opening_for_one_cell_board(index, @size)

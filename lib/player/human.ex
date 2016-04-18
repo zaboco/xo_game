@@ -39,7 +39,8 @@ defmodule Player.Human do
   end
 
   defp validate_index(index, board) do
-    case Board.empty_at?(board, index) do
+    empty_cell_indexes = Board.indexes_where(board, &is_nil/1)
+    case index in empty_cell_indexes do
       true -> {:ok, index}
       false -> :error
     end
