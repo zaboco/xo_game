@@ -1,9 +1,4 @@
 defmodule Board do
-  @type status :: :in_progress | :tie | :win
-  @type t :: Matrix.t
-
-  @valid_indexes 0..8
-
   def empty(_size \\ size) do
     List.duplicate nil, size * size
   end
@@ -17,11 +12,14 @@ defmodule Board do
       end)
   end
 
-  def to_matrix(board, void_modifier \\ &(&1)) do
+  def to_matrix(board, index_modifier \\ &(&1)) do
     board
     |> Enum.with_index
-    |> Enum.map(&Cell.show &1, void_modifier)
-    |> Enum.chunk(size)
+    |> Enum.map(fn
+      {nil, i} -> index_modifier.(i)
+      {sign, _i} -> sign
+    end)
+    |> rows
   end
 
   def put(board, index, sign) when is_integer(index) do
@@ -37,7 +35,7 @@ defmodule Board do
   def indexes_where(board, cell_predicate) do
     board
     |> Enum.with_index
-    |> Enum.filter(fn {cell, i} -> cell_predicate.(cell) end)
+    |> Enum.filter(fn {cell, _i} -> cell_predicate.(cell) end)
     |> Enum.map(& elem &1, 1)
   end
 
@@ -51,29 +49,37 @@ defmodule Board do
 
   defp winner?(board) do
     lines =
-      Matrix.rows(board) ++
-      Matrix.columns(board) ++
-      Tuple.to_list(Matrix.diagonals board)
-    Enum.any? lines, &Cell.all_the_same?/1
+      rows(board) ++
+      columns(board) ++
+      diagonals(board)
+
+    Enum.any? lines, fn [first | rest] ->
+      not is_nil(first) and Enum.all?(rest, & &1 == first)
+    end
   end
 
   defp full?(board) do
     Enum.all?(board, & not is_nil &1)
   end
 
-  def size, do: 3
-end
+  defp rows(board) do
+    Enum.chunk board, size
+  end
 
-defmodule Cell do
-  def show({cell, index}, void_modifier) do
-    case cell do
-      nil -> void_modifier.(index)
-      sign -> sign
+  defp columns(board) do
+    for i <- 0..size - 1 do
+      board |> Enum.drop(i) |> Enum.take_every(size)
     end
   end
 
-  def all_the_same?([nil | _]), do: false
-  def all_the_same?([first | rest]) do
-    Enum.all? rest, & &1 == first
+  defp diagonals(board) do
+    first_diagonal = board |> Enum.take_every(size + 1)
+    second_diagonal = board
+      |> Stream.take_every(size - 1)
+      |> Enum.slice(1, size)
+
+    [first_diagonal, second_diagonal]
   end
+
+  def size, do: 3
 end
