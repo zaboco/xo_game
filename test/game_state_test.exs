@@ -6,7 +6,7 @@ defmodule GameStateTest do
 
   test "initial" do
     make_players = fn -> :players end
-    expected_state = %State{board: Board.empty(3), players: :players}
+    expected_state = %State{board: Board.empty, players: :players}
     assert State.initial(make_players) == expected_state
   end
 

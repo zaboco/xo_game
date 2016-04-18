@@ -62,7 +62,7 @@ defmodule Player.ComputerTest do
 
   @corners [0, 2, 6, 8]
   test "get_move_index is a corner for empty board" do
-    board = Board.empty(3)
+    board = Board.empty
     assert Computer.get_move_index(:x, board) in @corners
   end
 

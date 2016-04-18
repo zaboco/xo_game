@@ -1,15 +1,10 @@
 defmodule Board do
-  def empty(_size \\ size) do
+  def empty do
     List.duplicate nil, size * size
   end
 
   def new(rows) do
-    rows
-    |> List.flatten
-    |> Enum.map(fn
-        :_ -> nil
-        sign -> sign
-      end)
+    List.flatten(rows)
   end
 
   def to_matrix(board, index_modifier \\ &(&1)) do

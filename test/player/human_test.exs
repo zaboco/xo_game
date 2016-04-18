@@ -3,12 +3,12 @@ defmodule Player.HumanTest do
   alias Player.Human
   import MockIO.Test
 
-  @empty_board Board.empty(3)
+  @empty_board Board.empty
   @x_human %Human{sign: :x}
 
   test "get_move displays the board with indexes" do
     with_inputs ["1"] do
-      Player.get_move(@x_human, Board.empty(3))
+      Player.get_move(@x_human, Board.empty)
       assert_output """
         +---+---+---+
         | 1 | 2 | 3 |

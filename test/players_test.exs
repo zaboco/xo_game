@@ -11,7 +11,7 @@ defmodule PlayersTest do
 
   test "get_current_move gets the move from the current player" do
     players = {%Stub{sign: :x}, :other_player}
-    move = Players.get_current_move(players, Board.empty(3))
+    move = Players.get_current_move(players, Board.empty)
     assert move == {Stub.move_index, :x}
   end
 

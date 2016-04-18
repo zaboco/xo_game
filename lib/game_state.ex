@@ -3,7 +3,7 @@ defmodule GameState do
   alias Player.Move
 
   @opaque t :: %State{}
-  defstruct board: Board.empty(3), players: []
+  defstruct board: Board.empty, players: []
 
   def initial(make_players \\ &Players.make/0) do
     %State{players: make_players.()}
