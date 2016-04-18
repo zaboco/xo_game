@@ -2,7 +2,7 @@ defmodule GameStateTest do
   use ExUnit.Case
   alias GameState, as: State
   import Board.Sigils
-  import GameUI.MockIO.Test
+  import MockIO.Test
 
   test "initial" do
     make_players = fn -> :players end

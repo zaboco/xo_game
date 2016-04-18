@@ -1,4 +1,4 @@
-defmodule GameUI.MockIO.Behaviour do
+defmodule MockIO.Behaviour do
   @callback gets(prompt :: String.t) :: String.t
   @callback puts(item :: String.t) :: :ok
   @callback write(item :: String.t) :: :ok

@@ -1,6 +1,6 @@
 defmodule GameTest do
   use ExUnit.Case, async: false
-  import GameUI.MockIO.Test
+  import MockIO.Test
 
   defmacro verify_call(call, do: block) do
     {fun, _, args} = call

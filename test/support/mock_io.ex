@@ -1,5 +1,5 @@
-defmodule GameUI.MockIO do
-  use GameUI.MockIO.Behaviour
+defmodule MockIO do
+  use MockIO.Behaviour
 
   def gets(_prompt) do
     case Application.get_env(:xo_game, :inputs) do

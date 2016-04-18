@@ -1,7 +1,7 @@
 defmodule Player.HumanTest do
   use ExUnit.Case, async: false
   alias Player.Human
-  import GameUI.MockIO.Test
+  import MockIO.Test
 
   @empty_board Board.empty(3)
   @x_human %Human{sign: :x}

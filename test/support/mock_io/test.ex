@@ -1,4 +1,4 @@
-defmodule GameUI.MockIO.Test do
+defmodule MockIO.Test do
   defmacro with_inputs(inputs, do: block) do
     quote do
       old_inputs = Application.get_env :xo_game, :inputs, []

@@ -1,7 +1,7 @@
 defmodule PlayersTest do
   use ExUnit.Case, async: false
   alias Player.{Human, Computer, Stub}
-  import GameUI.MockIO.Test
+  import MockIO.Test
 
   test "make reads type for each sign and creates players of the given type" do
     with_inputs ["h", "computer"] do

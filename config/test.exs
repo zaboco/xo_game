@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :xo_game,
-  io: GameUI.MockIO,
+  io: MockIO,
   coloring_enabled: false,
   messages: [
     wrong_index: "wrong_index: :arg",
