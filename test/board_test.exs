@@ -1,9 +1,9 @@
 defmodule BoardTest do
   use ExUnit.Case
-  import Matrix.Sigils, only: [sigil_m: 2]
+  import Board.Sigils
 
   @empty_board  Board.empty
-  @some_board   Board.new ~m|x _ _ : _ o _ : _ _ x|
+  @some_board   ~b|x _ _ : _ o _ : _ _ x|
 
   ## to_matrix
   test "to_matrix returns indexes for empty cells" do
@@ -24,7 +24,7 @@ defmodule BoardTest do
 
   ## put
   test "puts a sign in the cell if it is empty" do
-    expected_board = Board.new ~m|x x _ : _ o _ : _ _ x|
+    expected_board = ~b|x x _ : _ o _ : _ _ x|
     assert @some_board |> Board.put(1, :x) == expected_board
   end
 
@@ -47,43 +47,42 @@ defmodule BoardTest do
 
   ## check_status
   test "status is :win if any row, column or diagonal is aligned" do
-    for board_rows <- [
+    for board <- [
       # rows
-      ~m|x x x : _ _ _ : _ _ _|,
-      ~m|_ _ _ : o o o : _ _ _|,
-      ~m|x o o : o o x : x x x|,
+      ~b|x x x : _ _ _ : _ _ _|,
+      ~b|_ _ _ : o o o : _ _ _|,
+      ~b|x o o : o o x : x x x|,
 
       #columns
-      ~m|
+      ~b|
         x _ _
         x _ o
         x o _|,
-      ~m|
+      ~b|
         x o _
         _ o _
         x o _|,
-      ~m|
+      ~b|
         _ x o
         _ _ o
         _ x o|,
 
       #diagonals
-      ~m|
+      ~b|
         x _ o
         _ x _
         o _ x|,
-      ~m|
+      ~b|
         x _ o
         _ o _
         o _ x|,
     ] do
-      status = board_rows |> Board.new |> Board.check_status
-      assert status == :win
+      assert board |> Board.check_status == :win
     end
   end
 
   test "status is :tie if it's no winner and the board is full" do
-    tie_board = Board.new ~m|
+    tie_board = ~b|
       x o x
       o x o
       o x o|
@@ -91,7 +90,7 @@ defmodule BoardTest do
   end
 
   test "status is :in_progress if neither :win nor :tie" do
-    allmost_full_board = Board.new ~m|
+    allmost_full_board = ~b|
       x o x
       o x o
       o x _|

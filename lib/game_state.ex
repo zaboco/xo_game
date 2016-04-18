@@ -1,7 +1,6 @@
 defmodule GameState do
   alias GameState, as: State
   alias Player.Move
-  import ShortMaps
 
   @opaque t :: %State{}
   defstruct board: Board.empty(3), players: []
@@ -36,7 +35,7 @@ defmodule GameState do
     board
   end
 
-  defp eval_temporary_state(~m(%State board players)a = state) do
+  defp eval_temporary_state(%State{board: board, players: players} = state) do
     case Board.check_status(board) do
       :in_progress -> {:in_progress, spawp_players(state)}
       :win -> {:win, Players.show_current(players)}

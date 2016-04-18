@@ -1,7 +1,7 @@
 defmodule GameStateTest do
   use ExUnit.Case
   alias GameState, as: State
-  import Matrix.Sigils
+  import Board.Sigils
   import GameUI.MockIO.Test
 
   test "initial" do
@@ -14,13 +14,13 @@ defmodule GameStateTest do
   @initial_state State.initial(fn -> @players end)
 
   test "eval_next for move that wins" do
-    state = state_of board: ~m|_ x x : _ _ _ : _ _ _|
+    state = state_of board: ~b|_ x x : _ _ _ : _ _ _|
     expected = {:win, Players.show_current(@players)}
     assert State.eval_next(state, move_to(0)) == expected
   end
 
   test "eval_next for move that ends game as tie" do
-    state = state_of board: ~m|
+    state = state_of board: ~b|
       _ o x
       o x o
       o x o|
@@ -29,9 +29,9 @@ defmodule GameStateTest do
   end
 
   test "eval_next updates the state for neutral move" do
-    state = state_of board: ~m|_ _ _ : _ _ _ : _ _ _|
+    state = state_of board: ~b|_ _ _ : _ _ _ : _ _ _|
     expected_state = state_of \
-      board: ~m|x _ _ : _ _ _ : _ _ _|,
+      board: ~b|x _ _ : _ _ _ : _ _ _|,
       players: Players.swap(@players)
     assert State.eval_next(state, move_to(0)) == {:in_progress, expected_state}
   end
@@ -55,11 +55,11 @@ defmodule GameStateTest do
     assert_output "player_turn: #{Players.show_current @players}\n"
   end
 
-  defp state_of(board: matrix) do
-    state_of board: matrix, players: @players
+  defp state_of(board: board) do
+    state_of board: board, players: @players
   end
-  defp state_of(board: matrix, players: players) do
-    %State{board: Board.new(matrix), players: players}
+  defp state_of(board: board, players: players) do
+    %State{board: board, players: players}
   end
 
   defp move_to(index) do
