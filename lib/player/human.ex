@@ -1,5 +1,5 @@
 defmodule Player.Human do
-  use Player, :human
+  def name, do: "human"
 
   def get_move_index(_sign, board) do
     print_board(board)

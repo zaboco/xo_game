@@ -1,6 +1,7 @@
 defmodule Player.Computer do
-  use Player, :computer
   alias Player.Move
+
+  def name, do: "computer"
 
   defmodule Score do
     @type t :: {:known, integer} | {:unknown, (() -> t)}
