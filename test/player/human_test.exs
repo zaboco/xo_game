@@ -4,7 +4,7 @@ defmodule Player.HumanTest do
   import MockIO.Test
 
   @empty_board Board.empty
-  @x_human %Human{sign: :x}
+  @x_human {Human, :x}
 
   test "get_move displays the board with indexes" do
     with_inputs ["1"] do

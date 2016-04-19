@@ -1,5 +1,5 @@
 defmodule Player.Stub do
-  use Player, :stub
+  def name, do: "stub"
 
   def get_move_index(_sign, _board) do
     move_index

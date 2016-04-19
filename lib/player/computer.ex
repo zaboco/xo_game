@@ -94,8 +94,8 @@ defmodule Player.Computer do
   def get_move_index(sign, board) do
     filled_cell_indexes = Board.indexes_where(board, & not is_nil &1)
     case filled_cell_indexes do
-      [] -> opening_for_empty_board(board)
-      [index] -> opening_for_one_cell_board(index, board)
+      [] -> opening_for_empty_board()
+      [index] -> opening_for_one_cell_board(index)
       _ -> calculate_best_index(sign, board)
     end
   end
@@ -107,14 +107,14 @@ defmodule Player.Computer do
     |> Choice.move_index
   end
 
-  defp opening_for_empty_board(board) do
-    random_corner board.size
+  defp opening_for_empty_board() do
+    random_corner Board.size
   end
 
-  defp opening_for_one_cell_board(index, board.) do
+  defp opening_for_one_cell_board(index) do
     center = &div(&1 * &1, 2)
-    case center.(board.size) do
-      ^index -> random_corner size
+    case center.(Board.size) do
+      ^index -> random_corner Board.size
       center -> center
     end
   end

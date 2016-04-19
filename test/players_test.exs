@@ -5,12 +5,12 @@ defmodule PlayersTest do
 
   test "make reads type for each sign and creates players of the given type" do
     with_inputs ["h", "computer"] do
-      assert Players.make == {%Human{sign: :x}, %Computer{sign: :o}}
+      assert Players.make == {{Human, :x}, {Computer, :o}}
     end
   end
 
   test "get_current_move gets the move from the current player" do
-    players = {%Stub{sign: :x}, :other_player}
+    players = {{Stub, :x}, :other_player}
     move = Players.get_current_move(players, Board.empty)
     assert move == {Stub.move_index, :x}
   end
@@ -20,7 +20,7 @@ defmodule PlayersTest do
   end
 
   test "show_current" do
-    players = {%Stub{sign: :x}, :other_player}
+    players = {{Stub, :x}, :other_player}
     shown = Players.show_current(players)
     assert shown == "x(stub)"
   end
