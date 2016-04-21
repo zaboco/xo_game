@@ -9,17 +9,10 @@ defmodule Game do
   end
 
   defp make_player(sign) do
-    sign
-    |> GameUI.read_player_type
-    |> player_type_from_string
-    |> Player.new(sign)
-  end
-
-  defp player_type_from_string(type_name) do
-    case String.first(type_name) do
-      "c" -> Computer
-      _ -> Human
-    end
+    types_mapping = %{"c" => Computer, "h" => Human}
+    type_name = GameUI.read_player_type(sign, Map.keys(types_mapping))
+    type = types_mapping[type_name]
+    Player.new(type, sign)
   end
 
   def play_round(game_state, eval_next \\ &GameState.eval_next/1) do

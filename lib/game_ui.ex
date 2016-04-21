@@ -5,8 +5,14 @@ defmodule GameUI do
     ask(:move_index)
   end
 
-  def read_player_type(sign) do
-    ask(:player_type, [sign]) |> String.downcase
+  def read_player_type(sign, valid_types) do
+    type_name = ask(:player_type, [sign]) |> String.downcase
+    if (type_initial = String.first(type_name)) in valid_types do
+      type_initial
+    else
+      log(:wrong_type, [type_name])
+      read_player_type(sign, valid_types)
+    end
   end
 
   def read_play_again() do
