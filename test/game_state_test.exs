@@ -2,16 +2,11 @@ defmodule GameStateTest do
   use ExUnit.Case
   alias GameState, as: State
   import Board.Sigils
-  import MockIO.Test
+  import MockIO.Test, only: [assert_output: 1]
 
   test "initial" do
-    with_inputs ["h", "computer"] do
-      expected_state = %State{
-        board: Board.empty,
-        players: Players.with_types({"h", "computer"})
-      }
-      assert State.initial == expected_state
-    end
+    expected_state = %State{board: Board.empty, players: :some_players}
+    assert State.initial(:some_players) == expected_state
   end
 
   @players Players.with_types({"human", "computer"})

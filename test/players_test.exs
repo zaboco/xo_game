@@ -1,7 +1,6 @@
 defmodule PlayersTest do
   use ExUnit.Case, async: false
   alias Player.{Human, Computer, Stub}
-  import MockIO.Test
 
   test "with_types" do
     assert Players.with_types({"h", "comp"}) == {{Human, :x}, {Computer, :o}}

@@ -1,6 +1,11 @@
 defmodule Game do
-  def start(init_state \\ &GameState.initial/0) do
-    Game.play_round(init_state.())
+  def start() do
+    [:x, :o]
+    |> Enum.map(&GameUI.read_player_type/1)
+    |> List.to_tuple
+    |> Players.with_types
+    |> GameState.initial
+    |> Game.play_round
   end
 
   def play_round(game_state, eval_next \\ &GameState.eval_next/1) do

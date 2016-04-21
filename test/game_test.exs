@@ -15,8 +15,13 @@ defmodule GameTest do
   end
 
   test "start plays the first round with the initial state" do
-    verify_call Game.play_round(:initial_state) do
-      Game.start(fn -> :initial_state end)
+    with_inputs ["h", "comp"] do
+      expected_initial_state = %GameState{
+        players: Players.with_types({"h", "comp"})
+      }
+      verify_call Game.play_round(expected_initial_state) do
+        Game.start()
+      end
     end
   end
 

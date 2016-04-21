@@ -5,12 +5,7 @@ defmodule GameState do
   @opaque t :: %State{}
   defstruct board: Board.empty, players: []
 
-  def initial() do
-    players = [:x, :o]
-    |> Enum.map(&GameUI.read_player_type/1)
-    |> List.to_tuple
-    |> Players.with_types
-
+  def initial(players) do
     %State{players: players}
   end
 
