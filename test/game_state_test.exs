@@ -5,13 +5,17 @@ defmodule GameStateTest do
   import MockIO.Test
 
   test "initial" do
-    make_players = fn -> :players end
-    expected_state = %State{board: Board.empty, players: :players}
-    assert State.initial(make_players) == expected_state
+    with_inputs ["h", "computer"] do
+      expected_state = %State{
+        board: Board.empty,
+        players: Players.with_types({"h", "computer"})
+      }
+      assert State.initial == expected_state
+    end
   end
 
   @players Players.with_types({"human", "computer"})
-  @initial_state State.initial(fn -> @players end)
+  @initial_state %State{players: @players}
 
   test "eval_next for move that wins" do
     state = state_of board: ~b|_ x x : _ _ _ : _ _ _|

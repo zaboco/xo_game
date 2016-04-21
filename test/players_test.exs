@@ -3,10 +3,8 @@ defmodule PlayersTest do
   alias Player.{Human, Computer, Stub}
   import MockIO.Test
 
-  test "make reads type for each sign and creates players of the given type" do
-    with_inputs ["h", "computer"] do
-      assert Players.make == {{Human, :x}, {Computer, :o}}
-    end
+  test "with_types" do
+    assert Players.with_types({"h", "comp"}) == {{Human, :x}, {Computer, :o}}
   end
 
   test "get_current_move gets the move from the current player" do
