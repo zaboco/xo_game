@@ -1,10 +1,6 @@
 defmodule PlayersTest do
   use ExUnit.Case, async: false
-  alias Player.{Human, Computer, Stub}
-
-  test "with_types" do
-    assert Players.with_types(["h", "comp"]) == [{Human, :x}, {Computer, :o}]
-  end
+  alias Player.{Stub}
 
   test "get_current_move gets the move from the current player" do
     players = [{Stub, :x}, :other_player]

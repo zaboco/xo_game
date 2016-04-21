@@ -1,6 +1,7 @@
 defmodule GameStateTest do
   use ExUnit.Case
   alias GameState, as: State
+  alias Player.{Human, Computer}
   import Board.Sigils
   import MockIO.Test, only: [assert_output: 1]
 
@@ -9,7 +10,7 @@ defmodule GameStateTest do
     assert State.initial(:some_players) == expected_state
   end
 
-  @players Players.with_types(["human", "computer"])
+  @players [Player.new(Human, :x), Player.new(Computer, :o)]
   @initial_state %State{players: @players}
 
   test "eval_next for move that wins" do

@@ -1,6 +1,7 @@
 defmodule GameTest do
   use ExUnit.Case, async: false
   import MockIO.Test
+  alias Player.{Human, Computer}
 
   defmacro verify_call(call, do: block) do
     {fun, _, args} = call
@@ -17,7 +18,7 @@ defmodule GameTest do
   test "start plays the first round with the initial state" do
     with_inputs ["h", "comp"] do
       expected_initial_state = %GameState{
-        players: Players.with_types(["h", "comp"])
+        players: [Player.new(Human, :x), Player.new(Computer, :o)]
       }
       verify_call Game.play_round(expected_initial_state) do
         Game.start()

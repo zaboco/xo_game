@@ -1,10 +1,25 @@
 defmodule Game do
+  alias Player.{Computer, Human}
+
   def start() do
     [:x, :o]
-    |> Enum.map(&GameUI.read_player_type/1)
-    |> Players.with_types
+    |> Enum.map(&make_player/1)
     |> GameState.initial
     |> Game.play_round
+  end
+
+  defp make_player(sign) do
+    sign
+    |> GameUI.read_player_type
+    |> player_type_from_string
+    |> Player.new(sign)
+  end
+
+  defp player_type_from_string(type_name) do
+    case String.first(type_name) do
+      "c" -> Computer
+      _ -> Human
+    end
   end
 
   def play_round(game_state, eval_next \\ &GameState.eval_next/1) do
