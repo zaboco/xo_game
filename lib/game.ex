@@ -2,7 +2,6 @@ defmodule Game do
   def start() do
     [:x, :o]
     |> Enum.map(&GameUI.read_player_type/1)
-    |> List.to_tuple
     |> Players.with_types
     |> GameState.initial
     |> Game.play_round

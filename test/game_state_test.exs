@@ -9,7 +9,7 @@ defmodule GameStateTest do
     assert State.initial(:some_players) == expected_state
   end
 
-  @players Players.with_types({"human", "computer"})
+  @players Players.with_types(["human", "computer"])
   @initial_state %State{players: @players}
 
   test "eval_next for move that wins" do
