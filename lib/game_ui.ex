@@ -6,11 +6,11 @@ defmodule GameUI do
   end
 
   def read_player_type(sign, valid_types) do
-    type_name = ask(:player_type, [sign]) |> String.downcase
+    type_name = ask(:player_type, sign) |> String.downcase
     if (type_initial = String.first(type_name)) in valid_types do
       type_initial
     else
-      log(:wrong_type, [type_name])
+      log(:wrong_type, type_name)
       read_player_type(sign, valid_types)
     end
   end
@@ -19,27 +19,27 @@ defmodule GameUI do
     ask(:play_again) |> String.strip |> String.downcase
   end
 
-  defp ask(question_type, args \\ []) do
-    question_type |> format_message(args) |> io.gets
+  defp ask(question_type, arg \\ nil) do
+    question_type |> format_message(arg) |> io.gets
   end
 
   def print_matrix(matrix) do
     matrix |> format_matrix |> io.write
   end
 
-  def log(message_type, args \\ []) do
-    message_type |> format_message(args) |> io.puts
+  def log(message_type, arg \\ nil) do
+    message_type |> format_message(arg) |> io.puts
   end
 
   def clear_screen do
     io.write IO.ANSI.clear
   end
 
-  defp format_message(code, args) do
+  defp format_message(code, arg) do
     message = Application.get_env(:xo_game, :messages)[code]
-    case args do
-      [] -> message
-      [arg] -> String.replace(message, ":arg", to_string(arg))
+    case arg do
+      nil -> message
+      _ -> String.replace(message, ":arg", to_string(arg))
     end
   end
 

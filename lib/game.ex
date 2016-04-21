@@ -18,7 +18,7 @@ defmodule Game do
   def play_round(game_state, eval_next \\ &GameState.eval_next/1) do
     case eval_next.(game_state) do
       {:win, winner_name} ->
-        GameUI.log(:game_won, [winner_name])
+        GameUI.log(:game_won, winner_name)
         Game.stop
       {:tie} ->
         GameUI.log(:game_tie)

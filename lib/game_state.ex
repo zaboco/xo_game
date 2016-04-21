@@ -10,7 +10,7 @@ defmodule GameState do
   end
 
   def eval_next(state, get_current_move \\ &Players.get_current_move/2) do
-    GameUI.log(:player_turn, [Players.show_current(state.players)])
+    GameUI.log(:player_turn, Players.show_current(state.players))
     state
     |> update_board(get_current_move)
     |> eval_temporary_state
