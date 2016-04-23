@@ -31,10 +31,6 @@ defmodule GameUI do
     message_type |> format_message(arg) |> io.puts
   end
 
-  def clear_screen do
-    io.write IO.ANSI.clear
-  end
-
   defp format_message(code, arg) do
     message = Application.get_env(:xo_game, :messages)[code]
     case arg do
