@@ -1,7 +1,7 @@
 defmodule Player.ComputerTest do
   use ExUnit.Case
   import Board.Sigils
-  alias Player.{Move, Computer}
+  alias Player.{Computer}
   alias Computer.{Score, Choice}
 
   test "1 empty cell: score is zero if move results in a tie" do
@@ -95,6 +95,6 @@ defmodule Player.ComputerTest do
   end
 
   defp choice_of(index, board, sign \\ :x) do
-    Choice.new board, Move.new(index, sign)
+    Choice.new board, {index, sign}
   end
 end
