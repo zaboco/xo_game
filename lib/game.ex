@@ -2,6 +2,7 @@ defmodule Game do
   alias Player.{Computer, Human}
 
   def start() do
+    GameUI.clear_screen
     players = Enum.map([:x, :o], &make_player/1)
     GameUI.print_board(Board.empty)
     Game.play_round(%{players: players, board: Board.empty})

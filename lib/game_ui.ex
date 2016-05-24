@@ -31,6 +31,7 @@ defmodule GameUI do
   end
 
   def log_player_move({index, _sign}, board) do
+    clear_screen()
     log(:player_has_moved, index_to_ui(index))
     print_board(board)
   end
@@ -39,6 +40,12 @@ defmodule GameUI do
 
   def log(message_type, arg \\ nil) do
     message_type |> format_message(arg) |> IO.puts
+  end
+
+  def clear_screen do
+    if Application.get_env(:xo_game, :clear_screen) do
+      IO.write(IO.ANSI.clear <> IO.ANSI.home)
+    end
   end
 
   defp format_message(code, arg) do
