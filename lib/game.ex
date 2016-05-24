@@ -1,9 +1,9 @@
 defmodule Game do
   alias Player.{Computer, Human}
 
-  def start(play_initial_round \\ &play_round/1) do
+  def start() do
     players = Enum.map([:x, :o], &make_player/1)
-    play_initial_round.(%{players: players, board: Board.empty})
+    Game.play_round(%{players: players, board: Board.empty})
   end
 
   defp make_player(sign) do
@@ -13,21 +13,18 @@ defmodule Game do
     Player.new(type, sign)
   end
 
-  def play_round(
-      %{board: board, players: [current_player, _] = players},
-      stop_game \\ &stop/0,
-      play_next_round \\ &play_round/1) do
+  def play_round(%{board: board, players: [current_player, _] = players}) do
     move = Player.get_move(current_player, board)
     case eval_move(move, board) do
       {:win, _board} ->
         GameUI.log(:game_won, Player.show(current_player))
-        stop_game.()
+        Game.stop()
       {:tie, _board} ->
         GameUI.log(:game_tie)
-        stop_game.()
+        Game.stop()
       {:in_progress, board} ->
         next_state = %{board: board, players: swap_players(players)}
-        play_next_round.(next_state)
+        Game.play_round(next_state)
     end
   end
 
@@ -40,10 +37,10 @@ defmodule Game do
     [next, current]
   end
 
-  def stop(start_new_game \\ &start/0) do
+  def stop() do
     case GameUI.read_play_again do
       "n" -> GameUI.log(:goodbye)
-      _ -> start_new_game.()
+      _ -> Game.start()
     end
   end
 end
