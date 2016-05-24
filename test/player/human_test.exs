@@ -6,21 +6,6 @@ defmodule Player.HumanTest do
   @empty_board Board.empty
   @x_human {Human, :x}
 
-  test "get_move displays the board with indexes" do
-    output = capture_io [input: "1", capture_prompt: false], fn ->
-      Player.get_move(@x_human, Board.empty)
-    end
-    assert output == """
-      +---+---+---+
-      | 1 | 2 | 3 |
-      +---+---+---+
-      | 4 | 5 | 6 |
-      +---+---+---+
-      | 7 | 8 | 9 |
-      +---+---+---+
-      """
-  end
-
   test "get_move uses the given index if valid" do
     capture_io "1", fn ->
       assert @x_human |> Player.get_move(@empty_board) == {0, :x}

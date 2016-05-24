@@ -16,9 +16,18 @@ defmodule GameTest do
       players: [Player.new(Human, :x), Player.new(Computer, :o)]
     }
     verify_call Game, :play_round, expected_initial_state, fn ->
-      capture_io "h\ncomp", fn ->
+      output = capture_io [input: "h\ncomp", capture_prompt: false], fn ->
         Game.start()
       end
+      assert output == """
+        +---+---+---+
+        | 1 | 2 | 3 |
+        +---+---+---+
+        | 4 | 5 | 6 |
+        +---+---+---+
+        | 7 | 8 | 9 |
+        +---+---+---+
+        """
     end
   end
 
@@ -29,7 +38,7 @@ defmodule GameTest do
     }
     verify_call Game, :stop, fn ->
       output = capture_io fn -> Game.play_round(state) end
-      assert output == "game_won: x(stub)\n"
+      assert String.contains? output, "game_won: x(stub)\n"
     end
   end
 
@@ -43,7 +52,7 @@ defmodule GameTest do
     }
     verify_call Game, :stop, fn ->
       output = capture_io fn -> Game.play_round(state) end
-      assert output == "game_tie\n"
+      assert String.contains? output, "game_tie\n"
     end
   end
 
@@ -58,7 +67,18 @@ defmodule GameTest do
       players: [:next_player, current_player]
     }
     verify_call Game, :play_round, expected_next_state, fn ->
-      Game.play_round(current_state)
+      output = capture_io fn -> Game.play_round(current_state) end
+      assert output == """
+        player_turn: x(stub)
+        player_has_moved: 1
+        +---+---+---+
+        | x | 2 | 3 |
+        +---+---+---+
+        | 4 | 5 | 6 |
+        +---+---+---+
+        | 7 | 8 | 9 |
+        +---+---+---+
+        """
     end
   end
 

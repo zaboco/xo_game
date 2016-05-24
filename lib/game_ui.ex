@@ -23,9 +23,19 @@ defmodule GameUI do
     question_type |> format_message(arg) |> IO.gets
   end
 
-  def print_matrix(matrix) do
-    matrix |> format_matrix |> IO.write
+  def print_board(board) do
+    board
+    |> Board.to_matrix(&index_to_ui/1)
+    |> format_matrix
+    |> IO.write
   end
+
+  def log_player_move({index, _sign}, board) do
+    log(:player_has_moved, index_to_ui(index))
+    print_board(board)
+  end
+
+  defp index_to_ui(index), do: index + 1
 
   def log(message_type, arg \\ nil) do
     message_type |> format_message(arg) |> IO.puts

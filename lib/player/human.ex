@@ -2,14 +2,7 @@ defmodule Player.Human do
   def name, do: "human"
 
   def get_move_index(_sign, board) do
-    print_board(board)
     get_index(board)
-  end
-
-  defp print_board(board) do
-    board
-    |> Board.to_matrix(& &1 + 1)
-    |> GameUI.print_matrix
   end
 
   defp get_index(board) do
