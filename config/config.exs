@@ -1,7 +1,6 @@
 use Mix.Config
 
 config :xo_game,
-  io: IO,
   coloring_enabled: true,
   messages: [
     move_index: "Choose an empty cell: ",

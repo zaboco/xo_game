@@ -20,15 +20,15 @@ defmodule GameUI do
   end
 
   defp ask(question_type, arg \\ nil) do
-    question_type |> format_message(arg) |> io.gets
+    question_type |> format_message(arg) |> IO.gets
   end
 
   def print_matrix(matrix) do
-    matrix |> format_matrix |> io.write
+    matrix |> format_matrix |> IO.write
   end
 
   def log(message_type, arg \\ nil) do
-    message_type |> format_message(arg) |> io.puts
+    message_type |> format_message(arg) |> IO.puts
   end
 
   defp format_message(code, arg) do
@@ -60,6 +60,4 @@ defmodule GameUI do
       string
     end
   end
-
-  defp io, do: Application.get_env(:xo_game, :io)
 end

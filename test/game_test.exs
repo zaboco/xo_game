@@ -1,6 +1,6 @@
 defmodule GameTest do
   use ExUnit.Case, async: false
-  import MockIO.Test
+  import ExUnit.CaptureIO
   import Board.Sigils
   import MeckSpy, only: [verify_call: 4, verify_call: 3]
   alias Player.{Human, Computer, Stub}
@@ -11,12 +11,12 @@ defmodule GameTest do
   end
 
   test "start plays the first round with the initial state" do
-    with_inputs ["h", "comp"] do
-      expected_initial_state = %{
-        board: Board.empty,
-        players: [Player.new(Human, :x), Player.new(Computer, :o)]
-      }
-      verify_call Game, :play_round, expected_initial_state do
+    expected_initial_state = %{
+      board: Board.empty,
+      players: [Player.new(Human, :x), Player.new(Computer, :o)]
+    }
+    verify_call Game, :play_round, expected_initial_state, fn ->
+      capture_io "h\ncomp", fn ->
         Game.start()
       end
     end
@@ -27,9 +27,9 @@ defmodule GameTest do
       board: ~b|_ x x : _ _ _ : _ _ _|,
       players: [player_moving_at(0, :x), :other_player]
     }
-    verify_call Game, :stop do
-      Game.play_round(state)
-      assert_output "game_won: x(stub)\n"
+    verify_call Game, :stop, fn ->
+      output = capture_io fn -> Game.play_round(state) end
+      assert output == "game_won: x(stub)\n"
     end
   end
 
@@ -41,9 +41,9 @@ defmodule GameTest do
         o x o|,
       players: [player_moving_at(0, :x), :other_player]
     }
-    verify_call Game, :stop do
-      Game.play_round(state)
-      assert_output "game_tie\n"
+    verify_call Game, :stop, fn ->
+      output = capture_io fn -> Game.play_round(state) end
+      assert output == "game_tie\n"
     end
   end
 
@@ -57,24 +57,24 @@ defmodule GameTest do
       board: ~b|x _ _ : _ _ _ : _ _ _|,
       players: [:next_player, current_player]
     }
-    verify_call Game, :play_round, expected_next_state do
+    verify_call Game, :play_round, expected_next_state, fn ->
       Game.play_round(current_state)
     end
   end
 
   test "stop starts a new game if the user wants to play again" do
-    verify_call Game, :start do
-      with_inputs ["y"] do
-        Game.stop
+    verify_call Game, :start, fn ->
+      capture_io "y", fn ->
+        Game.stop()
       end
     end
   end
 
   test "stop exits if the users doesn't want another game" do
-    with_inputs ["n"] do
+    output = capture_io [input: "n", capture_prompt: false], fn ->
       Game.stop
-      assert_output "goodbye\n"
     end
+    assert output == "goodbye\n"
   end
 
   defp player_moving_at(index, sign) do
