@@ -1,42 +1,37 @@
 defmodule Board do
-  alias Matrix.LinearMatrix
-
-  @type status :: :in_progress | :tie | :win
-  @type t :: Matrix.t
-
-  def empty(size) do
-    0..(size * size - 1)
-    |> Enum.map(&Cell.empty/1)
-    |> LinearMatrix.from_enum
+  def empty do
+    List.duplicate nil, size * size
   end
 
   def new(rows) do
-    rows
-    |> List.flatten
+    List.flatten(rows)
+  end
+
+  def to_matrix(board, index_modifier \\ &(&1)) do
+    board
     |> Enum.with_index
-    |> LinearMatrix.from_enum
+    |> Enum.map(fn
+      {nil, i} -> index_modifier.(i)
+      {sign, _i} -> sign
+    end)
+    |> rows
   end
 
-  def to_matrix(board, void_modifier \\ &(&1)) do
+  def put(board, index, sign) when is_integer(index) do
+    case Enum.at(board, index) do
+      nil ->
+        List.replace_at(board, index, sign)
+      _ ->
+        board
+    end
+  end
+  def put(_board, _index, _sign), do: :error
+
+  def indexes_where(board, cell_predicate) do
     board
-    |> Matrix.map(&Cell.show &1, void_modifier)
-    |> Matrix.rows
-  end
-
-  def put(board, index, sign) do
-    board
-    |> Matrix.map(&Cell.fill &1, if_at: index, with: sign)
-  end
-
-  def empty_at?(board, index) when index >= 0 do
-    board
-    |> Enum.at(index)
-    |> Cell.empty?
-  end
-  def empty_at?(_board, _index), do: false
-
-  def empty_cell_indexes(board) do
-    Enum.filter_map(board, &Cell.empty?/1, &Cell.index/1)
+    |> Enum.with_index
+    |> Enum.filter(fn {cell, _i} -> cell_predicate.(cell) end)
+    |> Enum.map(& elem &1, 1)
   end
 
   def check_status(board) do
@@ -49,51 +44,37 @@ defmodule Board do
 
   defp winner?(board) do
     lines =
-      Matrix.rows(board) ++
-      Matrix.columns(board) ++
-      Tuple.to_list(Matrix.diagonals board)
-    Enum.any? lines, &Cell.all_the_same?/1
+      rows(board) ++
+      columns(board) ++
+      diagonals(board)
+
+    Enum.any? lines, fn [first | rest] ->
+      not is_nil(first) and Enum.all?(rest, & &1 == first)
+    end
   end
 
   defp full?(board) do
-    board
-    |> Enum.all?(&Cell.filled?/1)
-  end
-end
-
-defmodule Cell do
-  @void :_
-  @signs [:x, :o]
-
-  def empty(index) do
-    {@void, index}
+    Enum.all?(board, & not is_nil &1)
   end
 
-  def index({_sign, index}), do: index
+  defp rows(board) do
+    Enum.chunk board, size
+  end
 
-  def show(cell, void_modifier \\ &(&1)) do
-    case cell do
-      {@void, index} -> void_modifier.(index)
-      {sign, _index} -> sign
+  defp columns(board) do
+    for i <- 0..size - 1 do
+      board |> Enum.drop(i) |> Enum.take_every(size)
     end
   end
 
-  def fill(cell, if_at: index, with: sign) when sign in @signs do
-    case cell do
-      {@void, ^index} -> {sign, index}
-      existing_cell -> existing_cell
-    end
+  defp diagonals(board) do
+    first_diagonal = board |> Enum.take_every(size + 1)
+    second_diagonal = board
+      |> Stream.take_every(size - 1)
+      |> Enum.slice(1, size)
+
+    [first_diagonal, second_diagonal]
   end
 
-  def filled?({@void, _i}), do: false
-  def filled?(_), do: true
-
-  def empty?(cell), do: !filled?(cell)
-
-  def all_the_same?([first | rest]) do
-    Enum.all? rest, &same_sign_as?(&1, first)
-  end
-
-  defp same_sign_as?({sign, _i}, {sign, _j}), do: sign != @void
-  defp same_sign_as?(_, _), do: false
+  def size, do: 3
 end

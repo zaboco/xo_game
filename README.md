@@ -13,3 +13,7 @@ $ mix escript.build
 $ ./xo_game
 ```
 
+You can optionally clear the screen between each round, feature disabled by default:
+```sh
+./xo_game --clear
+```

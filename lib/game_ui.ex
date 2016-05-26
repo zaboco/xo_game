@@ -5,35 +5,54 @@ defmodule GameUI do
     ask(:move_index)
   end
 
-  def read_player_type(sign) do
-    ask(:player_type, [sign]) |> String.downcase
+  def read_player_type(sign, valid_types) do
+    type_name = ask(:player_type, sign) |> String.downcase
+    if (type_initial = String.first(type_name)) in valid_types do
+      type_initial
+    else
+      log(:wrong_type, type_name)
+      read_player_type(sign, valid_types)
+    end
   end
 
   def read_play_again() do
     ask(:play_again) |> String.strip |> String.downcase
   end
 
-  defp ask(question_type, args \\ []) do
-    question_type |> format_message(args) |> io.gets
+  defp ask(question_type, arg \\ nil) do
+    question_type |> format_message(arg) |> IO.gets
   end
 
-  def print_matrix(matrix) do
-    matrix |> format_matrix |> io.write
+  def print_board(board) do
+    board
+    |> Board.to_matrix(&index_to_ui/1)
+    |> format_matrix
+    |> IO.write
   end
 
-  def log(message_type, args \\ []) do
-    message_type |> format_message(args) |> io.puts
+  def log_player_move({index, _sign}, board) do
+    clear_screen()
+    log(:player_has_moved, index_to_ui(index))
+    print_board(board)
+  end
+
+  defp index_to_ui(index), do: index + 1
+
+  def log(message_type, arg \\ nil) do
+    message_type |> format_message(arg) |> IO.puts
   end
 
   def clear_screen do
-    io.write IO.ANSI.clear
+    if Application.get_env(:xo_game, :clear_screen) do
+      IO.write(IO.ANSI.clear <> IO.ANSI.home)
+    end
   end
 
-  defp format_message(code, args) do
+  defp format_message(code, arg) do
     message = Application.get_env(:xo_game, :messages)[code]
-    case args do
-      [] -> message
-      [arg] -> String.replace(message, ":arg", to_string(arg))
+    case arg do
+      nil -> message
+      _ -> String.replace(message, ":arg", to_string(arg))
     end
   end
 
@@ -58,6 +77,4 @@ defmodule GameUI do
       string
     end
   end
-
-  defp io, do: Application.get_env(:xo_game, :io)
 end

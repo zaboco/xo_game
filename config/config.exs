@@ -1,14 +1,15 @@
 use Mix.Config
 
 config :xo_game,
-  io: IO,
   coloring_enabled: true,
   messages: [
     move_index: "Choose an empty cell: ",
-    player_type: "Choose type for :arg - [H]uman / [c]omputer: ",
+    player_type: "Choose type for :arg - [h]uman / [c]omputer: ",
     play_again: "Play again? (Y/n) ",
     wrong_index: "Not a valid cell: :arg",
-    player_turn: "\nIt is :arg's turn:",
+    wrong_type: "Not a valid type: :arg",
+    player_turn: "\n:arg to move...",
+    player_has_moved: "\nPlayer moved at :arg:",
     board_updated: "The board is now:",
     game_won: "Game over. :arg won!",
     game_tie: "Game over. It is a tie!",

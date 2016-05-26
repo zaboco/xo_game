@@ -1,25 +1,17 @@
 defmodule Player.Human do
-  use Player, :human
+  def name, do: "human"
 
   def get_move_index(_sign, board) do
-    print_board(board)
     get_index(board)
-  end
-
-  defp print_board(board) do
-    board
-    |> Board.to_matrix(& &1 + 1)
-    |> GameUI.print_matrix
   end
 
   defp get_index(board) do
     index_string = GameUI.read_index
     case parse_and_validate(index_string, board) do
       {:ok, index} ->
-        GameUI.clear_screen
         index
       :error ->
-        GameUI.log(:wrong_index, [index_string])
+        GameUI.log(:wrong_index, index_string)
         get_index(board)
     end
   end
@@ -39,7 +31,8 @@ defmodule Player.Human do
   end
 
   defp validate_index(index, board) do
-    case Board.empty_at?(board, index) do
+    empty_cell_indexes = Board.indexes_where(board, &is_nil/1)
+    case index in empty_cell_indexes do
       true -> {:ok, index}
       false -> :error
     end
