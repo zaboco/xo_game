@@ -15,8 +15,6 @@ defmodule Player.Computer do
 
     def negate({:known, value}), do: {:known, -value}
 
-    def max?(score), do: score == max
-
     def best_in(scores) do
       scores
       |> Enum.reduce_while([], &do_lazy_expand/2)
